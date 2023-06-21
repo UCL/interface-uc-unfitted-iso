@@ -3,8 +3,6 @@ from xfem import *
 from xfem.lsetcurv import LevelSetMeshAdaptation
 from math import pi
 import numpy as np
-import matplotlib
-matplotlib.use('tkagg')
 import matplotlib.pyplot as plt
 plt.rc('legend',fontsize=15)
 plt.rc('axes',titlesize=15)

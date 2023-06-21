@@ -1,7 +1,9 @@
 FROM ngsxfem/ngsxfem:latest
 
 USER root
-RUN apt-get install -y \
+RUN sed -i -re 's/([a-z]{2}\.)?archive.ubuntu.com|security.ubuntu.com/old-releases.ubuntu.com/g' /etc/apt/sources.list
+RUN apt-get update && apt-get dist-upgrade -y
+RUN apt-get install -y  \
   texlive-full \
   wget
 

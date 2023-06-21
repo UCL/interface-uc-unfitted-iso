@@ -36,21 +36,3 @@ StabiTuningIF(problem= helmholtz_4ball)
 
 
 
-# not used
-
-#mu = [1.0,1.0]
-#mu = [10.0,2.0]
-#mu = [2.0,10.0]
-#mu = [2.0,20.0]
-#EqualOrderExp(problem= diffusion_4ball) # for paper 
-#StabiTuningGeom(problem= diffusion_4ball, order_geom= 1 )
-#StabiTuningGeom(problem= diffusion_4ball, order_geom= 1 )
-#TuningGammaGeom(problem= diffusion_4ball, order_geom= 1,equal_order=False )
-#TuningGammaGeom(problem= diffusion_4ball, equal_order=True )
-#domain_type =  "squares"
-#helmholtz_4ball.SetProblemType(well_posed=True)
-#helmholtz_4ball.SetDomainType(domain_type,ref_lvl = 8)
-#mu = [1.0,2.0]
-#k = [16,2]
-#helmholtz_4ball.Update(mu=mu,k=k,solution=refsol_Helmholtz(mu,k))
-

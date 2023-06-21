@@ -20,8 +20,6 @@ class interface_problem():
         self.k = k 
         self.meshes = [ ]
         self.domain_type = domain_type 
-        #self.coef_f = [-mu[i] * (solution[i].Diff(x).Diff(x)
-        #               + solution[i].Diff(y).Diff(y))  - k[i]**2*solution[i]  for i in range(2)]
         self.coef_f = [-mu[i] * (solution[i].Diff(x).Diff(x)
                        + solution[i].Diff(y).Diff(y) + solution[i].Diff(z).Diff(z) )  - k[i]**2*solution[i]  for i in range(2)]
         self.well_posed = False
@@ -40,11 +38,6 @@ class interface_problem():
                         "data-all-around":"ball-4-norm-data-all-around", 
                         "data-half": "ball-4-norm-data-half" 
                         }
-        #type_to_name = {"squares": lset_name + "-squares", 
-        #                "convex": lset_name + "-convex", 
-        #                "data-all-around": lset_name + "-data-all-around", 
-        #                "data-half": lset_name + "-data-half" 
-        #                }
         if domain_type in type_to_name: 
             self.lset_name = type_to_name[domain_type] 
         for i in range(ref_lvl):
@@ -56,13 +49,10 @@ class interface_problem():
         self.k = k
         self.mu = mu 
         self.solution = solution
-        #self.gradient = [ CoefficientFunction((self.solution[i].Diff(x),self.solution[i].Diff(y))) for i in range(2) ] 
         if self.dim == 2:
             self.gradient = [ CoefficientFunction((self.solution[i].Diff(x),self.solution[i].Diff(y))) for i in range(2) ] 
         else:
             self.gradient = [ CoefficientFunction((self.solution[i].Diff(x),self.solution[i].Diff(y),self.solution[i].Diff(z))) for i in range(2) ] 
-        #self.coef_f = [-self.mu[i] * (self.solution[i].Diff(x).Diff(x)
-        #               + self.solution[i].Diff(y).Diff(y))  - self.k[i]**2*self.solution[i]  for i in range(2)]
         self.coef_f = [-self.mu[i] * (self.solution[i].Diff(x).Diff(x)
                        + self.solution[i].Diff(y).Diff(y) + self.solution[i].Diff(z).Diff(z) )  - self.k[i]**2*self.solution[i]  for i in range(2)]
 
@@ -79,7 +69,6 @@ def refsol_diffusion(mu):
     c2 = 1
     c3 = (mu[0]/mu[1])*(pi/sqrt(2.0))
     solution = [c1 - c2 * cos(pi / 4 * r44), c3 * r41]
-    #solution = [1 + pi / 2 - sqrt(2.0) * cos(pi / 4 * r44), pi / 2 * r41]
     return solution
 
 levelset = r41 - 1.0
@@ -104,14 +93,7 @@ helmholtz_4ball = interface_problem(lset=levelset,
                                     k = k)
 
 # Helmholtz problem 
-
 rho = x**2 + y**2 + z**2
-#rho = x**2 + y**2
-#def refsol_Helmholtz_2ball(mu,k):
-#    c2 = -(k[1]/k[0])*(mu[1]/mu[0])*cos(k[1])/sin(k[0])
-#    c1 = sin(k[1]) - c2*cos(k[0]) 
-#    solution = [ c1 + c2 * cos( k[0] * rho),  sin( k[1] * rho) ]
-#    return solution
 
 def refsol_Helmholtz_2ball(mu,k):
     #k = [k[0]/(2*pi),k[1]/(2*pi)]
@@ -119,13 +101,8 @@ def refsol_Helmholtz_2ball(mu,k):
     c2 = -(k[1]/k[0])*(mu[1]/mu[0])*cos(k[1])/sin(k[0])
     c1 = sin(k[1]) - c2*cos(k[0]) 
     solution = [ c1 + c2 * cos( k[0] * rho),  sin( k[1] * rho) ]
-    #solution = [ c1 + c2 * cos( k[0] * rho) , c1 + c2 * cos( k[0] * rho)    ]
-    #solution = [ c1 + c2 * cos(  rho) , c1 + c2 * cos(  rho)    ]
-    #solution = [  cos( x+y+z ) ,  cos( x+y+z)    ]
     return solution
 
-
-#k = [0.05, 0.05]
 k = [4.0,4.0]
 levelset_2ball = sqrt(rho) - 1.0 
 helmholtz_2ball = interface_problem(lset=levelset_2ball,
@@ -152,25 +129,6 @@ diffusion_3D = interface_problem(lset = levelset_3D,
                                     k = k,
                                     dim=3)
 
-
-# Pure diffusion problem in 3D 
-
-
-
-# pure diffusion problem on flower
-#r0 = 0.9 
-#beta = 1/10 
-#omega = 8 
-#theta = atan2(x,y)
-#levelset_flower = sqrt(r22) - (r0+beta*sin(omega*theta))
-#eta = r22 - (r0+beta*sin(omega*theta))**2
-#refsol_diffusion_flower = [ 1 + 1*cos(eta), eta**2 + 2 ]
-#mu_flower = [1.0, 2.0]
-#k_flower = [0.0, 0.0]
-#diffusion_flower = interface_problem(lset=levelset_flower,
-#                                    solution= refsol_diffusion_flower,
-#                                    mu = mu_flower, 
-#                                    k = k_flower)
 
 
 
