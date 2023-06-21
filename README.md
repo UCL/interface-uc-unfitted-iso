@@ -6,6 +6,46 @@ This repository contains software and instructions to reproduce the numerical ex
 > * University College London
 
 # How to run / install
+We describe two options to setup the software for running the experiments. 
+
+* downloading a `docker image` from `Zenodo` or `Docker Hub` which contains all dependencies and tools to run the application,
+* or installing everything manually on your own local machine. 
+
+We recommend the first option as it is quick and convenient. The second option provides higher flexibility but may be more complicated. 
+Please contact <j.preuss@ucl.ac.uk> if problems occur. 
+ 
+The instructions for running the image are geared towards users who have access to a Unix like environment with a `bash` shell.
+Windows users may use Linux subsystems or tools like [Git BASH](https://gitforwindows.org/) or [MobaXterm](https://mobaxterm.mobatek.net/) to 
+run these commands.
+
+## Pulling the docker image from Docker Hub 
+* Please install the `docker` platform for your distribution as described [here](https://docs.docker.com/get-docker/).
+* After installation the `Docker daemon` has to be started. This can either be done on boot or manually. In most Linux 
+distributions the command for the latter is either `sudo systemctl start docker` or `sudo service docker start`.
+* Pull the docker image using the command `docker pull janosch2888/interface-uc:v1`. 
+* Run the image with `sudo docker run -it janosch2888/interface-uc:v1 bash`.
+* Proceed further as described in [How to reproduce](#repro).
+
+## Downloading the docker image from Zenodo
+* For this option the first two steps are the same as above.
+* The image can be downloaded INSERT ZENODO URL HERE. 
+* Assuming that `interface-uc-repro.tar` is the filename of the downloaded image, please load the image with `sudo docker load < interface-uc-repro.tar`.
+* Run the image with `sudo docker run -it janosch2888/interface-uc:v1 bash`.
+* Proceed further as described in [How to reproduce](#repro).
+
+## Manual installation
+We first have to install the library `ngsxfem` as described in detail [here](https://github.com/ngsxfem/ngsxfem/blob/release/INSTALLATION.md).
+The easiest option is probably installation via `pip`. Please make sure to specify the following version 
+
+    pip install xfem==2.1.2301
+ 
+In case you would like to compile from source, please checkout the tag `v2.1.2301`.
+For compiling the figures you will also need a recent `latex` distribution installed on your machine.
+Now we are ready to clone the repository using 
+
+    git clone https://github.com/UCL/interface-uc-unfitted-iso.git 
+
+and proceed as described in [How to reproduce](#repro).
 
 # <a name="repro"></a> How to reproduce
 The `python` scripts for runnings the numerical experiments are located in the folder `scripts`.
@@ -103,7 +143,7 @@ Change to directory `scripts`. Run
 Data files of the form "ball-4-norm-squares-iprelL2error-pq__i__-mus(__a__,__b__)-ks(16,2).dat". The meaning of the variables __i__,__a__ and __b__ is like 
 explained in [Fig.6](#Fig6). To generate Fig 8, switch to the folder `plots` and run  
 
-    lualatex -pdf ball-4-norm-squares-diffusion-contrast.tex
+    lualatex -pdf ball-4-norm-squares-Helmholtz-contrast.tex
 
 ## Fig. 9
 
