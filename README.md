@@ -75,7 +75,7 @@ Change to directory `scripts`. Run
 
     python3 convex-exact-data.py
 
-Afterwards, new data files of the form "ball-4-norm-convex-ip-p__i__ -q__j__ -mus(1,2)-ks(16,2).dat" will be available in the folder `data`. Here, __i__ in [1,2,3] describes the finite element order p and __j__ the order of the geometry approximation q in [1,2,3] using the same notation as in the paper. 
+Afterwards, new data files of the form "ball-4-norm-convex-ip-p __i__ -q __j__ -mus(1,2)-ks(16,2).dat" will be available in the folder `data`. Here, __i__ in [1,2,3] describes the finite element order p and __j__ the order of the geometry approximation q in [1,2,3] using the same notation as in the paper. 
 The data in the files is structured in the following columns:
 
 * ndof: Degrees of freedom in the finite element space (= CutFEM space + space for dual variable)
@@ -95,7 +95,7 @@ Change to directory `scripts`. Run
 
     python3 convex-noise.py   
 
-Data files of the form "ball-4-norm-convex-ip-p__i__ -q__i__ -theta__j__-deltap0__X__.dat". Here:
+Data files of the form "ball-4-norm-convex-ip-p __i__ -q __i__ -theta __j__-deltap0__X__.dat". Here:
 
 *  __i__ in [1,2,3] describes the finite element order p, which is chosen equal to the order of the geometry approximation q for this problem,
 * __j__ in [0,1,2] gives the value of theta (as defined in Secion 5.1.2 of the paper),
@@ -111,7 +111,7 @@ Change to directory `scripts`. Run
 
     python3 squares-diffusion-contrast.py
 
-Data files of the form "ball-4-norm-squares-iprelL2error-pq__i__ -mus(__a__,__b__)-ks(0,0).dat" will be created. Here, __i__ describes the finite element order.
+Data files of the form "ball-4-norm-squares-iprelL2error-pq __i__ -mus(__a__,__b__)-ks(0,0).dat" will be created. Here, __i__ describes the finite element order.
 The value of the diffusion parameter in subdomain Omega1 is mu1 = __a__ and in subdomain Omega2 is mu2 = __b__. The data in these files is ordered in the 
 same way as described in [Fig.3](#Fig3)
 To generate Fig 6, switch to the folder `plots` and run  
@@ -140,8 +140,8 @@ Change to directory `scripts`. Run
 
     python3 squares-exact-data-Helmholtz.py
 
-Data files of the form "ball-4-norm-squares-iprelL2error-pq__i__ -mus(__a__,__b__)-ks(16,2).dat". The meaning of the variables __i__,__a__ and __b__ is like 
-explained in [Fig.6](#Fig6). To generate Fig 8, switch to the folder `plots` and run  
+Data files of the form "ball-4-norm-squares-iprelL2error-pq __i__ -mus(__a__,__b__)-ks(16,2).dat". The meaning of the variables __i__,__a__ and __b__ is like 
+explained in [Fig.6](#Fig6). Additionally, `vtu` files for containing the data for the plots in the inset of Fig 8 will be produced. To generate Fig 8, switch to the folder `plots` and run  
 
     lualatex -pdf ball-4-norm-squares-Helmholtz-contrast.tex
 
@@ -155,10 +155,11 @@ Change to directory `scripts`. Run
 
     python3 3DStudy.py
 
-Data files of the form "ball-4-norm-convex-3D-ip-p__j__ -q__j__ -mus(1,2)-ks(0,0).dat" will be produced where __j__ in [1,2,3] represents the finite
-element order. To generate Fig. 9, switch to the folder `plots` and run 
+Data files of the form "ball-4-norm-convex-3D-ip-p __j__ -q __j__ -mus(1,2)-ks(0,0).dat" will be produced where __j__ in [1,2,3] represents the finite
+element order. Additionally, a `vtu` file containing the data for the plot of the absolute error shown in the center of Fig 9 will be created. To generate Fig. 9, switch to the folder `plots` and run 
 
     lualatex -pdf ball-4-norm-convex-3D-diffusion.tex 
+
 
 
 

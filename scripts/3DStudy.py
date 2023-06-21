@@ -46,8 +46,8 @@ def ResolvedGeom(problem,show_plots=False):
         vtk_output = False
         for n_ref in range(n_refs):
             if order == 3 and n_ref ==  (n_refs-1):
-                #vtk_output = True
-                vtk_output = False
+                vtk_output = True
+                #vtk_output = False
             result = SolveZNoCut(problem=problem, order = order, n_refs = n_ref, order_geom=order_geom, order_dual = order, stabi_dict=stabi_dict, geom_stab_all_el = False,vtk_output = vtk_output )
             l2_err = result["rel-l2-err"]
             ndof = result["ndof"]
