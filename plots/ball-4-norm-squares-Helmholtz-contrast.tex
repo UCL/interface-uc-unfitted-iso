@@ -1,0 +1,162 @@
+\documentclass[tikz]{standalone}
+\usetikzlibrary{spy,shapes,shadows,calc,pgfplots.groupplots}
+\usepackage{amsmath}
+\usepackage{physics} 
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.3}
+\usepackage{amsmath}
+\DeclareFontFamily{OT1}{pzc}{}
+\DeclareFontShape{OT1}{pzc}{m}{it}{<-> s * [1.10] pzcmi7t}{}
+\DeclareMathAlphabet{\mathpzc}{OT1}{pzc}{m}{it}
+\newcommand{\ddtn}{\operatorname{dtn}}
+
+\pgfplotsset{
+  legend style = {font=\small}
+}
+
+\begin{document}
+\begin{tikzpicture}[scale = 1.0]
+
+%\begin{axis}[
+\begin{groupplot}[
+    group style={
+        group name=dtn,
+        group size=3 by 1,
+        %xticklabels at=edge bottom,
+        horizontal sep=5pt,
+        vertical sep=40pt,
+   },
+   %name = dtnplot,
+   height = 6cm,
+   width = 7.0cm,
+   every axis plot/.append style={thick},
+   axis y line*=left,
+   legend pos = south east,
+   %xmin = 0,
+   %xmax = 11000,
+   %ymin = -20,
+   %ymax = 20,
+   %restrict y to domain=-1e2:1e2,
+   %label style={at={(axis description cs:0.5,-0.08)},anchor=north},
+   %every x tick scale label/.style={at={(xticklabel cs:0.925)},anchor=south west},
+   x label style={at={(axis description cs:0.55,0.085)},anchor=east},
+   %xlabel= { $\lambda$},
+    ymin = 6e-3,
+    ymax = 2e1,
+   ]
+    \nextgroupplot[ 
+    ymode=log,
+    xmode=log,
+    %xmin=0,xmax=1.6e4,
+    %xtick={25, 125, 250, 500, 800, 1000},
+    %axis x line*=middle,
+    %axis y line=middle, 
+    %ymin = 1e-5,
+    %ymax = 4e0,
+    %width=9cm,
+    %restrict y to domain=-4e2:4e2,
+    %xtick={0,2e3,4e3,6e3,8e3,10e3,12e3,14e3},
+    xlabel= {ndof},
+    %legend pos = south west,
+    legend pos = south west,
+    %x label style={at={(axis description cs:0.575,-0.15)},anchor=east},
+    title = { $ (\mu_1,\mu_2) = (2,20) $ }, 
+    %y tick label style={xshift={3em}}
+	]
+
+    \addplot[red,very thick,mark=*] 
+   	table[x=ndof,y=rel-L2-err-B] {../data/ball-4-norm-squares-iprelL2error-pq1-mus(2,20)-ks(16,2).dat}; 
+    \addplot[blue,very thick,mark=triangle]  
+	table[x=ndof,y=rel-L2-err-B] {../data/ball-4-norm-squares-iprelL2error-pq2-mus(2,20)-ks(16,2).dat}; 
+    \addplot[green!70!black,very thick,mark=x]  
+   	table[x=ndof,y=rel-L2-err-B] {../data/ball-4-norm-squares-iprelL2error-pq3-mus(2,20)-ks(16,2).dat};  
+    \addplot[gray,dotted,thick] 
+   	table[mark=none,x=ndof,y expr ={1.5e1*\thisrowno{1}}] {../data/ball-4-norm-squares-iprelL2error-pq1-mus(20,2)-ks(16,2).dat}; 
+    %\addplot[gray,dashed,thick] 
+   %	table[mark=none,x=ndof,y expr ={3e1*\thisrowno{1}*\thisrowno{1}}] {../data/ball-4-norm-squares-iprelL2error-pq2-mus(20,2)-ks(16,2).dat};
+    \node (mypic) at (12.95,0.95) {\includegraphics[scale = .1025]{ball-4-norm-squares-p3-q3-lvl5-abserr-mu2-20.png}};
+    \node[draw,circle,ultra thick,lightgray] (W1) at (axis cs:7.3e5,1.25e-2) {};
+    \node[] (W2) at (axis cs:4e5,4e-1) {};
+	\draw[lightgray,ultra thick,->] (W1.north) -- (W2.south);    
+    \legend{$p=1$,$p=2$,$p=3$, $\mathcal{O}(h)$  } 	    
+     
+    \nextgroupplot[ 
+    ymode=log,
+    xmode=log,
+    %xmin=0,xmax=1.6e4,
+    %xtick={25, 125, 250, 500, 800, 1000},
+    %axis x line*=middle,
+    %axis y line=middle, 
+    ymajorticks=false, 
+    %ymin = 1e-5,
+    %ymax = 4e0,
+    %width=9cm,
+    %restrict y to domain=-4e2:4e2,
+    %xtick={0,2e3,4e3,6e3,8e3,10e3,12e3,14e3},
+    %xlabel= {ndof},
+    %legend pos = south west,
+    legend pos = north east,
+    %x label style={at={(axis description cs:0.575,-0.15)},anchor=east},
+    title = {  $ (\mu_1,\mu_2) = (2,2) $  },
+	]
+    \addplot[red,very thick,mark=*] 
+   	table[x=ndof,y=rel-L2-err-B] {../data/ball-4-norm-squares-iprelL2error-pq1-mus(2,2)-ks(16,2).dat}; 
+    \addplot[blue,very thick,mark=triangle]  
+	table[x=ndof,y=rel-L2-err-B] {../data/ball-4-norm-squares-iprelL2error-pq2-mus(2,2)-ks(16,2).dat}; 
+    \addplot[green!70!black,very thick,mark=x]  
+   	table[x=ndof,y=rel-L2-err-B] {../data/ball-4-norm-squares-iprelL2error-pq3-mus(2,2)-ks(16,2).dat}; 
+    \addplot[gray,dotted,thick] 
+   	table[mark=none,x=ndof,y expr ={1.5e1*\thisrowno{1}}] {../data/ball-4-norm-squares-iprelL2error-pq1-mus(20,2)-ks(16,2).dat}; 
+
+    \node (mypica) at (12.95,0.95) {\includegraphics[scale = .1025]{ball-4-norm-squares-p3-q3-lvl5-abserr-mu2-2.png}};
+    \node[draw,circle,ultra thick,lightgray] (V1) at (axis cs:7.3e5,3.0e-2) {};
+    \node[] (V2) at (axis cs:4e5,4e-1) {};
+	\draw[lightgray,ultra thick,->] (V1.north) -- (V2.south);    
+
+    \nextgroupplot[ 
+    ymode=log,
+    xmode=log,
+    %xmin=0,xmax=1.6e4,
+    %xtick={25, 125, 250, 500, 800, 1000},
+    %axis x line*=middle,
+    %axis y line=middle, 
+    ymajorticks=false, 
+    %ymin = 1e-5,
+    %ymax = 4e0,
+    %width=9cm,
+    %restrict y to domain=-4e2:4e2,
+    %xtick={0,2e3,4e3,6e3,8e3,10e3,12e3,14e3},
+    %xlabel= {ndof},
+    %legend pos = south west,
+    legend pos = north east,
+    %x label style={at={(axis description cs:0.575,-0.15)},anchor=east},
+    title = {  $ (\mu_1,\mu_2) = (20,2) $  },
+	]
+    \addplot[red,very thick,mark=*] 
+   	table[x=ndof,y=rel-L2-err-B] {../data/ball-4-norm-squares-iprelL2error-pq1-mus(20,2)-ks(16,2).dat}; 
+    \addplot[blue,very thick,mark=triangle]  
+	table[x=ndof,y=rel-L2-err-B] {../data/ball-4-norm-squares-iprelL2error-pq2-mus(20,2)-ks(16,2).dat}; 
+    \addplot[green!70!black,very thick,mark=x]  
+   	table[x=ndof,y=rel-L2-err-B] {../data/ball-4-norm-squares-iprelL2error-pq3-mus(20,2)-ks(16,2).dat}; 
+    \addplot[gray,dotted,thick] 
+   	table[mark=none,x=ndof,y expr ={1.5e1*\thisrowno{1}}] {../data/ball-4-norm-squares-iprelL2error-pq1-mus(20,2)-ks(16,2).dat}; 
+    
+    \node (mypicb) at (12.95,0.95) {\includegraphics[scale = .1025]{ball-4-norm-squares-p3-q3-lvl5-abserr-mu20-2.png}};
+    \node[draw,circle,ultra thick,lightgray] (Z1) at (axis cs:7.3e5,4.750e-2) {};
+    \node[] (Z2) at (axis cs:4e5,4e-1) {};
+	\draw[lightgray,ultra thick,->] (Z1.north) -- (Z2.south);    
+   \end{groupplot}
+\end{tikzpicture}
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,180 @@
+\documentclass[tikz]{standalone}
+\usetikzlibrary{spy,shapes,shadows,calc,pgfplots.groupplots}
+\usepackage{amsmath}
+\usepackage{physics} 
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.3}
+\usepackage{amsmath}
+\DeclareFontFamily{OT1}{pzc}{}
+\DeclareFontShape{OT1}{pzc}{m}{it}{<-> s * [1.10] pzcmi7t}{}
+\DeclareMathAlphabet{\mathpzc}{OT1}{pzc}{m}{it}
+\newcommand{\ddtn}{\operatorname{dtn}}
+
+\pgfplotsset{
+  legend style = {font=\small}
+}
+
+\begin{document}
+\begin{tikzpicture}[scale = 1.0]
+
+%\begin{axis}[
+\begin{groupplot}[
+    group style={
+        group name=dtn,
+        group size=3 by 1,
+        %xticklabels at=edge bottom,
+        horizontal sep=5pt,
+        vertical sep=40pt,
+   },
+   %name = dtnplot,
+   height = 6cm,
+   width = 7.0cm,
+   every axis plot/.append style={thick},
+   axis y line*=left,
+   legend pos = south east,
+   %xmin = 0,
+   %xmax = 11000,
+   %ymin = -20,
+   %ymax = 20,
+   %restrict y to domain=-1e2:1e2,
+   %label style={at={(axis description cs:0.5,-0.08)},anchor=north},
+   %every x tick scale label/.style={at={(xticklabel cs:0.925)},anchor=south west},
+   x label style={at={(axis description cs:0.55,0.085)},anchor=east},
+   %xlabel= { $\lambda$},
+    ymin = 1e-4,
+    ymax = 3e0,
+   ]
+    \nextgroupplot[ 
+    ymode=log,
+    xmode=log,
+    %xmin=0,xmax=1.6e4,
+    %xtick={25, 125, 250, 500, 800, 1000},
+    %axis x line*=middle,
+    %axis y line=middle, 
+    %ymin = 1e-5,
+    %ymax = 4e0,
+    %width=9cm,
+    %restrict y to domain=-4e2:4e2,
+    %xtick={0,2e3,4e3,6e3,8e3,10e3,12e3,14e3},
+    xlabel= {ndof},
+    %legend pos = south west,
+    legend pos = south west,
+    %x label style={at={(axis description cs:0.575,-0.15)},anchor=east},
+    title = { $ \theta = 0  $ }, 
+    %y tick label style={xshift={3em}}
+	]
+
+    \addplot[red,very thick,mark=*,forget plot] 
+   	table[x=ndof,y=rel-L2-err-B] {../data/ball-4-norm-convex-ip-p1-q1-theta0-deltap01.dat}; 
+    \addplot[red,very thick,mark=*,dashed,forget plot] 
+   	table[x=ndof,y=rel-L2-err-B] {../data/ball-4-norm-convex-ip-p1-q1-theta0-deltap05.dat}; 
+    \addplot[blue,very thick,mark=triangle,forget plot]  
+	table[x=ndof,y=rel-L2-err-B] {../data/ball-4-norm-convex-ip-p2-q2-theta0-deltap01.dat};
+    \addplot[blue,very thick,mark=triangle,dashed,forget plot]  
+	table[x=ndof,y=rel-L2-err-B] {../data/ball-4-norm-convex-ip-p2-q2-theta0-deltap05.dat};
+    \addplot[green!70!black,very thick,mark=x,forget plot]  
+   	table[x=ndof,y=rel-L2-err-B] {../data/ball-4-norm-convex-ip-p3-q3-theta0-deltap01.dat};  
+    \addplot[green!70!black,very thick,mark=x,dashed,forget plot]  
+   	table[x=ndof,y=rel-L2-err-B] {../data/ball-4-norm-convex-ip-p3-q3-theta0-deltap05.dat};  
+    %\addplot[gray,dashed,thick,forget plot] 
+   %	table[mark=none,x=ndof,y expr ={1.5e1*\thisrowno{1}}] {../data/ball-4-norm-convex-ip-p1-q1-theta0-deltap01.dat}; 
+    \addplot[gray,dotted,thick] 
+   	table[mark=none,x=ndof,y expr ={1.5e3*\thisrowno{1}*\thisrowno{1}}] {../data/ball-4-norm-convex-ip-p2-q2-theta0-deltap01.dat}; 
+    \addplot[gray,dashdotted,thick] 
+   	table[mark=none,x=ndof,y expr ={2.15e5*\thisrowno{1}*\thisrowno{1}*\thisrowno{1}}] {../data/ball-4-norm-convex-ip-p2-q2-theta0-deltap01.dat}; 
+    %\addplot[gray,dashed,thick] 
+   %	table[mark=none,x=ndof,y expr ={3e1*\thisrowno{1}*\thisrowno{1}}] {../data/ball-4-norm-squares-iprelL2error-pq2-mus(20,2)-ks(16,2).dat};
+    
+    %\legend{$p=1$,$p=2$,$p=3$, $\mathcal{O}(h)$  } 	    
+    \legend{  $\mathcal{O}(h^2)$, $\mathcal{O}(h^3)$ } 	    
+     
+    \nextgroupplot[ 
+    ymode=log,
+    xmode=log,
+    %xmin=0,xmax=1.6e4,
+    %xtick={25, 125, 250, 500, 800, 1000},
+    %axis x line*=middle,
+    %axis y line=middle, 
+    ymajorticks=false, 
+    %ymin = 1e-5,
+    %ymax = 4e0,
+    %width=9cm,
+    %restrict y to domain=-4e2:4e2,
+    %xtick={0,2e3,4e3,6e3,8e3,10e3,12e3,14e3},
+    %xlabel= {ndof},
+    %legend pos = south west,
+    legend pos = south west,
+    %x label style={at={(axis description cs:0.575,-0.15)},anchor=east},
+    title = {  $ \theta = 1  $   },
+	]
+    \addplot[red,very thick,mark=*] 
+   	table[x=ndof,y=rel-L2-err-B] {../data/ball-4-norm-convex-ip-p1-q1-theta1-deltap01.dat}; 
+    \addplot[red,very thick,mark=*,dashed,forget plot] 
+   	table[x=ndof,y=rel-L2-err-B] {../data/ball-4-norm-convex-ip-p1-q1-theta1-deltap05.dat}; 
+    \addplot[blue,very thick,mark=triangle]  
+	table[x=ndof,y=rel-L2-err-B] {../data/ball-4-norm-convex-ip-p2-q2-theta1-deltap01.dat}; 
+    \addplot[blue,very thick,mark=triangle,dashed,forget plot]  
+	table[x=ndof,y=rel-L2-err-B] {../data/ball-4-norm-convex-ip-p2-q2-theta1-deltap05.dat}; 
+    \addplot[green!70!black,very thick,mark=x]  
+   	table[x=ndof,y=rel-L2-err-B] {../data/ball-4-norm-convex-ip-p3-q3-theta1-deltap01.dat}; 
+    \addplot[green!70!black,very thick,mark=x,dashed,forget plot]  
+   	table[x=ndof,y=rel-L2-err-B] {../data/ball-4-norm-convex-ip-p3-q3-theta1-deltap05.dat};
+    %\addplot[gray,dotted,thick,forget plot] 
+   %	table[mark=none,x=ndof,y expr ={1.5e3*\thisrowno{1}*\thisrowno{1}}] {../data/ball-4-norm-convex-ip-p2-q2-theta0-deltap01.dat}; 
+    %\addplot[gray,dashdotted,thick,forget plot] 
+   %	table[mark=none,x=ndof,y expr ={2.15e5*\thisrowno{1}*\thisrowno{1}*\thisrowno{1}}] {../data/ball-4-norm-convex-ip-p2-q2-theta0-deltap01.dat}; 
+    \legend{$p=1$,$p=2$,$p=3$  } 	    
+    %\addplot[gray,dotted,thick] 
+   %	table[mark=none,x=ndof,y expr ={1.5e1*\thisrowno{1}}] {../data/ball-4-norm-squares-iprelL2error-pq1-mus(20,2)-ks(16,2).dat}; 
+
+
+    \nextgroupplot[ 
+    ymode=log,
+    xmode=log,
+    %xmin=0,xmax=1.6e4,
+    %xtick={25, 125, 250, 500, 800, 1000},
+    %axis x line*=middle,
+    %axis y line=middle, 
+    ymajorticks=false, 
+    %ymin = 1e-5,
+    %ymax = 4e0,
+    %width=9cm,
+    %restrict y to domain=-4e2:4e2,
+    %xtick={0,2e3,4e3,6e3,8e3,10e3,12e3,14e3},
+    %xlabel= {ndof},
+    %legend pos = south west,
+    legend pos = south east,
+    %x label style={at={(axis description cs:0.575,-0.15)},anchor=east},
+    title = {  $ \theta = 2 $ },
+	]
+    %\addplot[red,very thick,mark=*] 
+    %	table[x=ndof,y=rel-L2-err-B] {../data/ball-4-norm-convex-ip-p1-q1-theta2-deltap01.dat}; 
+    %\addplot[red,very thick,mark=*,dashed] 
+   %	table[x=ndof,y=rel-L2-err-B] {../data/ball-4-norm-convex-ip-p1-q1-theta2-deltap05.dat}; 
+    \addplot[blue,very thick,mark=triangle,forget plot]  
+	table[x=ndof,y=rel-L2-err-B] {../data/ball-4-norm-convex-ip-p2-q2-theta2-deltap01.dat}; 
+    \addplot[blue,very thick,mark=triangle,dashed,forget plot]  
+	table[x=ndof,y=rel-L2-err-B] {../data/ball-4-norm-convex-ip-p2-q2-theta2-deltap05.dat}; 
+    \addplot[green!70!black,very thick,mark=x,forget plot]  
+   	table[x=ndof,y=rel-L2-err-B] {../data/ball-4-norm-convex-ip-p3-q3-theta2-deltap01.dat}; 
+    \addplot[green!70!black,very thick,mark=x,dashed,forget plot]  
+   	table[x=ndof,y=rel-L2-err-B] {../data/ball-4-norm-convex-ip-p3-q3-theta2-deltap05.dat}; 
+    \addplot[gray,dashed,thick] 
+   	table[mark=none,x=ndof,y expr ={1.5e1*\thisrowno{1}}] {../data/ball-4-norm-convex-ip-p1-q1-theta0-deltap01.dat};
+   \legend{$\mathcal{O}(h)$}
+    \node (mypic) at (axis cs:5e3,4e-3) {\includegraphics[scale = .45]{oscillatory-sol-lset-4-norm.pdf}};
+    \end{groupplot}
+\end{tikzpicture}
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
