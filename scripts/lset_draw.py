@@ -7,9 +7,11 @@ from xfem.lsetcurv import LevelSetMeshAdaptation
 from math import pi
 from scipy import optimize
 import numpy as np
-import matplotlib
-matplotlib.use('tkagg')
+#import matplotlib
+#matplotlib.use('tkagg')
 import matplotlib.pyplot as plt
+from meshes import get_geometry
+
 
 r22 = x**2 + y**2
 r44 = x**4 + y**4
@@ -18,20 +20,21 @@ r41 = sqrt(sqrt(r44))
 
 levelset = r41 - 1.0
 
-levelset = sqrt(r22) - 1.0
 
 ddx = 10
+
+
 def draw_mesh_tikz(fes,mesh,name,case_str):
     ddx = 10
     rainbow = ["cyan","white"]
-    file = open("../plots/meshes/{0}.tex".format(name),"w+")
+    file = open("{0}.tex".format(name),"w+")
     file.write("\\documentclass{standalone} \n")
     file.write("\\usepackage{xr} \n")
     file.write("\\usepackage{tikz} \n")
     file.write("\\usepackage{pgfplots} \n")
     file.write("\\usepackage{xcolor} \n")
     file.write("\\usepackage{} \n")   
-    file.write("\\usetikzlibrary{shapes,arrows,shadows,snakes,calendar,matrix,spy,backgrounds,folding,calc,positioning,patterns} \n")
+    file.write("\\usetikzlibrary{shapes,arrows,shadows,snakes,calendar,matrix,spy,backgrounds,folding,calc,positioning,patterns,patterns.meta} \n")
     file.write("\\selectcolormodel{cmyk}  \n")  
     file.write("\\definecolor{orange}{cmyk}{0,0.45,0.91,0} \n")  
     file.write("\\definecolor{brightblue}{cmyk}{0.92,0,0.15,0.05} \n")  
@@ -97,7 +100,7 @@ def draw_mesh_tikz(fes,mesh,name,case_str):
                     file.write("\\draw[line width=0.01mm,draw =black, fill={0},fill opacity=0.8] {1} -- {2} -- {3} -- cycle; \n".format("brightblue",coords[0],coords[1],coords[2] ))
                 else:
                     file.write("\\draw[line width=0.01mm,draw =black, fill={0},fill opacity=0.8] {1} -- {2} -- {3} -- cycle; \n".format("white",coords[0],coords[1],coords[2] ))
-            if case_str == "squares-omega":
+            if case_str == "squares-omega" or "squares-omega-B":
                 if  np.all( x_coords >= -0.5) and np.all( x_coords <= 0.5) and  np.all( y_coords >= -0.5) and np.all( y_coords <= 0.5):  
                     file.write("\\draw[line width=0.01mm,draw =black, fill={0},fill opacity=0.8] {1} -- {2} -- {3} -- cycle; \n".format("yellow",coords[0],coords[1],coords[2] ))
                 else:
@@ -107,6 +110,17 @@ def draw_mesh_tikz(fes,mesh,name,case_str):
                     file.write("\\draw[line width=0.01mm,draw =black, fill={0},fill opacity=0.8] {1} -- {2} -- {3} -- cycle; \n".format("brightblue",coords[0],coords[1],coords[2] ))
                 else:
                     file.write("\\draw[line width=0.01mm,draw =black, fill={0},fill opacity=0.8] {1} -- {2} -- {3} -- cycle; \n".format("white",coords[0],coords[1],coords[2] ))
+
+            if case_str == "convex-omega-B":
+                if  np.all( x_coords <= -1.25) and (  np.all( y_coords <= 1.25)): 
+                    file.write("\\draw[line width=0.01mm,draw =black, fill={0},fill opacity=0.8] {1} -- {2} -- {3} -- cycle; \n".format("yellow",coords[0],coords[1],coords[2] ))
+                elif np.all( x_coords >= 1.25) and (  np.all( y_coords <= 1.25)): 
+                    file.write("\\draw[line width=0.01mm,draw =black, fill={0},fill opacity=0.8] {1} -- {2} -- {3} -- cycle; \n".format("yellow",coords[0],coords[1],coords[2] ))
+                elif  (  np.all( y_coords <= -1.25)): 
+                    file.write("\\draw[line width=0.01mm,draw =black, fill={0},fill opacity=0.8] {1} -- {2} -- {3} -- cycle; \n".format("yellow",coords[0],coords[1],coords[2] ))
+                else:
+                    file.write("\\draw[line width=0.01mm,draw =black, fill={0},fill opacity=1.0] {1} -- {2} -- {3} -- cycle; \n".format("white",coords[0],coords[1],coords[2] ))
+
 
         if len(coords) == 4:
             file.write("\\draw[line width=0.01mm,draw =black, fill={0},fill opacity=1] {1} -- {2} -- {3} -- {4} -- cycle; \n".format("white",coords[0],coords[1],coords[2],coords[3]))
@@ -120,8 +134,8 @@ def draw_mesh_tikz(fes,mesh,name,case_str):
     #s1 = "\\draw[line width=1mm,draw =black,dashed] (0.0, 0.0) -- node[midway,above]{ \\resizebox{ .125\\linewidth}{!}{\\itshape $r_{*}$} }"
     #s1 += "( {0}, 0.0); \n".format( 0.326*dx)
     #file.write(s1 )
-
-    file.write("\\draw[ ] ({0},{1})  node[above]{{  \\resizebox{{ .25\\linewidth}}{{!}}{{ \\textcolor{{richred}}{{$\Gamma$}} }} }};   \n".format( 0.0*ddx ,-0.95*ddx  ))
+    #\draw[pattern={dots},pattern color=orange]
+    #  (0,0) rectangle +(1,1);
     if case_str == "data-all-around-omega":
         file.write("\\draw[white ] ({0},{1})  node[fill=white,above]{{  \\resizebox{{ .25\\linewidth}}{{!}}{{ \\textcolor{{black}}{{$\omega$}} }} }};   \n".format( 0.0*ddx ,-1.45*ddx  ))
     if case_str == "data-all-around-B":
@@ -132,14 +146,58 @@ def draw_mesh_tikz(fes,mesh,name,case_str):
         file.write("\\draw[white ] ({0},{1})  node[fill=white,above]{{  \\resizebox{{ .25\\linewidth}}{{!}}{{ \\textcolor{{black}}{{$B$}} }} }};   \n".format( 0.0*ddx ,0.0*ddx  ))
     if case_str == "squares-omega": 
         file.write("\\draw[white ] ({0},{1})  node[fill=white,above]{{  \\resizebox{{ .25\\linewidth}}{{!}}{{ \\textcolor{{black}}{{$\omega$}} }} }};   \n".format( 0.0*ddx ,0.0*ddx  ))
+    if case_str == "convex-omega-B":
+        file.write("\\draw[pattern={{Dots[ distance={{30pt}},radius={{4pt}}]  }}, pattern color = magenta ] ({0},{1}) rectangle ({2},{3}); \n".format(-1.5*ddx,-1.5*ddx,1.5*ddx,1.25*ddx)) 
+        file.write("\\draw[white ] ({0},{1})  node[fill=white,above]{{  \\resizebox{{ .25\\linewidth}}{{!}}{{ \\textcolor{{magenta}}{{$B$}} }} }};   \n".format( 0.0*ddx ,0.0*ddx  ))
+        file.write("\\draw[white ] ({0},{1})  node[fill=white,above]{{  \\resizebox{{ .25\\linewidth}}{{!}}{{ \\textcolor{{yellow}}{{$\omega$}} }} }};   \n".format( 0.0*ddx ,-1.45*ddx  ))
+    if case_str == "convex-omega-B":
+        file.write("\\draw[pattern={{Dots[ distance={{30pt}},radius={{4pt}}]  }}, pattern color = magenta ] ({0},{1}) rectangle ({2},{3}); \n".format(-1.5*ddx,-1.5*ddx,1.5*ddx,1.25*ddx)) 
+        file.write("\\draw[white ] ({0},{1})  node[fill=white,above]{{  \\resizebox{{ .25\\linewidth}}{{!}}{{ \\textcolor{{magenta}}{{$B$}} }} }};   \n".format( 0.0*ddx ,0.0*ddx  ))
+        file.write("\\draw[white ] ({0},{1})  node[fill=white,above]{{  \\resizebox{{ .25\\linewidth}}{{!}}{{ \\textcolor{{yellow}}{{$\omega$}} }} }};   \n".format( 0.0*ddx ,-1.45*ddx  ))
+    if case_str == "squares-omega-B":
+        file.write("\\draw[pattern={{Dots[ distance={{30pt}},radius={{4pt}}]  }}, pattern color = magenta ] ({0},{1}) rectangle ({2},{3}); \n".format(-1.25*ddx,-1.25*ddx,1.25*ddx,1.25*ddx)) 
+        file.write("\\draw[white ] ({0},{1})  node[fill=white,above]{{  \\resizebox{{ .25\\linewidth}}{{!}}{{ \\textcolor{{magenta}}{{$B$}} }} }};   \n".format( 0.0*ddx ,1.1*ddx  ))
+        file.write("\\draw[white ] ({0},{1})  node[fill=white,above]{{  \\resizebox{{ .25\\linewidth}}{{!}}{{ \\textcolor{{yellow}}{{$\omega$}} }} }};   \n".format( 0.0*ddx ,0.0*ddx  ))
 
-    file.write("\\begin{{axis}}[view={{0}}{{90}},  anchor=origin,  disabledatascaling, at={{(0pt,0pt)}}, x={0}cm,y={0}cm,z={0}cm, hide axis ] \n".format(ddx))
-    file.write("\\addplot3 [ultra thick, \n") 
-    file.write(" contour lua={levels={0},labels=false, draw color=richred}, samples=200 ] {x^4 + y^4 - 1}; \n")
+
+    if case_str == "convex-omega-B" or "squares-omega-B":
+        file.write("\\draw[ ] ({0},{1})  node[fill=white,above]{{  \\resizebox{{ .25\\linewidth}}{{!}}{{ \\textcolor{{green!90!black}}{{$\Gamma$}} }} }};   \n".format( 0.0*ddx ,-0.95*ddx  ))
+        file.write("\\begin{{axis}}[view={{0}}{{90}},  anchor=origin,  disabledatascaling, at={{(0pt,0pt)}}, x={0}cm,y={0}cm,z={0}cm, hide axis ] \n".format(ddx))
+        file.write("\\addplot3 [line width=10pt, \n") 
+        file.write(" contour lua={levels={0},labels=false, draw color=green!90!black}, samples=200 ] {x^4 + y^4 - 1}; \n")
+    else:
+        file.write("\\draw[ ] ({0},{1})  node[above]{{  \\resizebox{{ .25\\linewidth}}{{!}}{{ \\textcolor{{richred}}{{$\Gamma$}} }} }};   \n".format( 0.0*ddx ,-0.95*ddx  ))
+        file.write("\\begin{{axis}}[view={{0}}{{90}},  anchor=origin,  disabledatascaling, at={{(0pt,0pt)}}, x={0}cm,y={0}cm,z={0}cm, hide axis ] \n".format(ddx))
+        file.write("\\addplot3 [ultra thick, \n") 
+        file.write(" contour lua={levels={0},labels=false, draw color=richred}, samples=200 ] {x^4 + y^4 - 1}; \n")
+
+    
     file.write(" \end{axis} \n ")
     file.write("\\end{tikzpicture} \n") 
     file.write("\\end{document} \n")           
     file.close()
+
+# draw convex mesh 
+def draw_based_on_geom(case_str="convex"):
+    mesh = Mesh(get_geometry(case_str= case_str))
+    lsetadap = LevelSetMeshAdaptation(mesh, order=1, levelset=levelset)
+    lsetp1 = lsetadap.lset_p1
+    Vh = H1(mesh, order=1, dirichlet=[],dgjumps=True)
+    Vh0 = H1(mesh, order=1, dirichlet="bc_Omega",dgjumps=False)
+    ci = CutInfo(mesh, lsetp1)
+    hasneg = ci.GetElementsOfType(HASNEG)
+    haspos = ci.GetElementsOfType(HASPOS)
+    hasif = ci.GetElementsOfType(IF)
+    Vh_Gamma = Compress(Vh, GetDofsOfElements(Vh, hasneg)) \
+              * Compress(Vh, GetDofsOfElements(Vh, haspos)) \
+              * Vh0
+    draw_mesh_tikz(Vh_Gamma,mesh, name= case_str+"-omega-B",case_str=case_str+"-omega-B")
+
+draw_based_on_geom(case_str="convex")
+draw_based_on_geom(case_str="squares")
+
+
+levelset = sqrt(r22) - 1.0
 
 
 def draw_mesh_simple(name="dummy",case_str="geom",draw_lset=True):
@@ -211,8 +269,8 @@ def draw_mesh_simple(name="dummy",case_str="geom",draw_lset=True):
     file.write("\\end{document} \n")           
     file.close()
 
-draw_mesh_simple(name="unfitted-mesh")
-draw_mesh_simple(name="background-mesh",draw_lset=False)
+#draw_mesh_simple(name="unfitted-mesh")
+#draw_mesh_simple(name="background-mesh",draw_lset=False)
 
 
 def draw_lset_simple(name="dummy",case_str="geom"):
@@ -591,7 +649,7 @@ def draw_Stab(name="Stab-sketch.tex",levelset=levelset,dt=NEG):
     print("hasneg =", hasneg)
 
     rainbow = ["cyan","white"]
-    file = open("../plots/meshes/{0}.tex".format(name),"w+")
+    file = open("{0}.tex".format(name),"w+")
     file.write("\\documentclass{standalone} \n")
     file.write("\\usepackage{xr} \n")
     file.write("\\usepackage{tikz} \n")
@@ -672,4 +730,4 @@ def draw_Stab(name="Stab-sketch.tex",levelset=levelset,dt=NEG):
     file.write("\\end{document} \n")           
     file.close()
 
-#draw_Stab(name="Stab-sketch",levelset=levelset,dt=NEG)
+draw_Stab(name="Stab-sketch",levelset=levelset,dt=NEG)
