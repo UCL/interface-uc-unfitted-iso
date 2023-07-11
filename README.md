@@ -28,7 +28,7 @@ distributions the command for the latter is either `sudo systemctl start docker`
 
 ## Downloading the docker image from Zenodo
 * For this option the first two steps are the same as above.
-* The image can be downloaded [Zenodo](https://doi.org/10.5281/zenodo.8134572). 
+* The image can be downloaded [here](https://doi.org/10.5281/zenodo.8134572). 
 * Assuming that `interface-uc-repro.tar` is the filename of the downloaded image, please load the image with `sudo docker load < interface-uc-repro.tar`.
 * Run the image with `sudo docker run -it janosch2888/interface-uc:v1 bash`.
 * Proceed further as described in [How to reproduce](#repro).
