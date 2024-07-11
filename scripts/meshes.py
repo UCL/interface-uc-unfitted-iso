@@ -160,3 +160,120 @@ def get_geometry(case_str="nonconvex"):
         
         m = geo.GenerateMesh(maxh=1.15)
         return m
+    
+    if case_str == "non-convex-3D":
+        
+        print("Creating 3D mesh")
+        geo = CSGeometry()
+        cube = OrthoBrick( Pnt(-1.75,-1.75,-1.75), Pnt(1.75,1.75,1.2) )
+        top = OrthoBrick( Pnt(-1.75,-1.75,1.2), Pnt(1.75,1.75,1.75) )
+        top.mat("rest") 
+        
+        cube.bc('bc_Omega')
+        removed_part = OrthoBrick( Pnt(-1.2,-1.2,-1.2), Pnt(1.75,1.2,1.2) )
+        inside = OrthoBrick( Pnt(-1.2,-1.2,-1.2), Pnt(1.2,1.2,1.2) )
+        left_over = removed_part - inside 
+        #inside = OrthoBrick( Pnt(-1.2,-1.2,-1.2), Pnt(1.2,1.2,1.2) )
+        inside.mat("only_B")
+        #omega = cube - inside 
+         
+        top.mat("top")
+        left_over.mat("right_lid")
+        omega = cube - removed_part 
+        omega.mat("omega")
+        
+        geo.Add(omega)
+        geo.Add(inside)
+        geo.Add(left_over)
+        geo.Add(top)
+        
+        m = geo.GenerateMesh(maxh=1.15)
+        return m
+
+    '''
+    if case_str == "concentric-3D":
+        
+        print("Creating 3D mesh")
+        geo = CSGeometry()
+        #cube = OrthoBrick( Pnt(-1.35,-1.35,-1.35), Pnt(1.35,1.35,1.35) )
+        cube = OrthoBrick( Pnt(-1.5,-1.5,-1.5), Pnt(1.5,1.5,1.5) )
+        cube.bc('bc_Omega')
+        omega = OrthoBrick( Pnt(-0.8,-0.8,-0.8), Pnt(0.8,0.8,0.8) )
+        B = OrthoBrick( Pnt(-1.1,-1.1,-1.1), Pnt(1.1,1.1,1.1) )
+        only_B = B - omega
+        rest = cube - B 
+
+        omega.mat("omega")
+        only_B.mat("only_B")
+        rest.mat("rest") 
+
+        geo.Add(omega)
+        geo.Add(rest)
+        geo.Add(only_B,maxh=0.2)
+        #geo.Add(only_B)
+        
+        m = geo.GenerateMesh(maxh=2.0)
+        return m
+    '''
+    if case_str == "concentric-3D":
+        
+        print("Creating 3D mesh")
+        geo = CSGeometry()
+        #cube = OrthoBrick( Pnt(-1.35,-1.35,-1.35), Pnt(1.35,1.35,1.35) )
+        cube = OrthoBrick( Pnt(-1.5,-1.5,-1.5), Pnt(1.5,1.5,1.5) )
+        cube.bc('bc_Omega')
+        omega = OrthoBrick( Pnt(-0.6,-0.6,-0.6), Pnt(0.6,0.6,0.6) )
+        #B = Sphere(Pnt(0,0,0),1.1)
+        B = Sphere(Pnt(0,0,0),1.2)
+        #B = OrthoBrick( Pnt(-1.1,-1.1,-1.1), Pnt(1.1,1.1,1.1) )
+        only_B = B - omega
+        rest = cube - B 
+
+        omega.mat("omega")
+        only_B.mat("only_B")
+        rest.mat("rest") 
+
+        geo.Add(omega)
+        geo.Add(rest)
+        geo.Add(only_B,maxh=0.15)
+        #geo.Add(only_B)
+        
+        m = geo.GenerateMesh(maxh=2.0)
+        return m
+    
+    if case_str == "concentric-3D-fitted":
+        
+        print("Creating 3D mesh")
+        geo = CSGeometry()
+        #cube = OrthoBrick( Pnt(-1.35,-1.35,-1.35), Pnt(1.35,1.35,1.35) )
+        cube = OrthoBrick( Pnt(-1.5,-1.5,-1.5), Pnt(1.5,1.5,1.5) )
+        cube.bc('bc_Omega')
+        omega = OrthoBrick( Pnt(-0.6,-0.6,-0.6), Pnt(0.6,0.6,0.6) )
+        
+        B = Sphere(Pnt(0,0,0),1.2)
+        Interior = Sphere(Pnt(0,0,0),1.0)
+        #B = OrthoBrick( Pnt(-1.1,-1.1,-1.1), Pnt(1.1,1.1,1.1) )
+        B_inner = Interior - omega
+        B_outer = B - Interior
+        #only_B = B - omega
+        rest = cube - B 
+
+        omega.mat("omega")
+        B_inner.mat("B_inner")
+        B_outer.mat("B_outer")
+
+        #only_B.mat("only_B")
+        rest.mat("rest") 
+
+        geo.Add(omega)
+        #geo.Add(B_inner)
+        #geo.Add(B_outer)
+        geo.Add(B_inner,maxh=0.15)
+        geo.Add(B_outer,maxh=0.15)
+        geo.Add(rest)
+        
+        #geo.Add(only_B,maxh=0.3)
+        #geo.Add(only_B)
+        
+        m = geo.GenerateMesh(maxh=2.0)
+        return m

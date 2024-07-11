@@ -23,7 +23,8 @@ class interface_problem():
         self.coef_f = [-mu[i] * (solution[i].Diff(x).Diff(x)
                        + solution[i].Diff(y).Diff(y) + solution[i].Diff(z).Diff(z) )  - k[i]**2*solution[i]  for i in range(2)]
         self.well_posed = False
-        self.problem_type = "ip" 
+        self.problem_type = "ip"
+        self.eval_pts = []
     def SetProblemType(self,well_posed):
         self.well_posed = well_posed 
         if self.well_posed:
@@ -36,7 +37,10 @@ class interface_problem():
                         "convex":"ball-4-norm-convex", 
                         "convex-3D":"ball-4-norm-convex-3D", 
                         "data-all-around":"ball-4-norm-data-all-around", 
-                        "data-half": "ball-4-norm-data-half" 
+                        "data-half": "ball-4-norm-data-half", 
+                        "non-convex-3D": "ball-2-norm-non-convex-3D",
+                        "concentric-3D": "ball-2-norm-concentric",
+                        "concentric-3D-fitted": "ball-2-concentric-fitted"
                         }
         if domain_type in type_to_name: 
             self.lset_name = type_to_name[domain_type] 
@@ -103,6 +107,29 @@ def refsol_Helmholtz_2ball(mu,k):
     solution = [ c1 + c2 * cos( k[0] * rho),  sin( k[1] * rho) ]
     return solution
 
+
+def refsol_Helmholtz_2ball(mu,k):
+    #k = [k[0]/(2*pi),k[1]/(2*pi)]
+    k = [k[0],k[1]]
+    #c2 = -(k[1]/k[0])*(mu[1]/mu[0])*cos(k[1])/sin(k[0])
+    #c1 = sin(k[1]) - c2*cos(k[0]) 
+    
+    c1 = -k[1]*mu[1]*cos(k[1]) / ( k[0]*mu[0]*sin(k[0]) )
+    c2 =  sin(k[1]) - c1 * cos(k[0])
+    rr = sqrt(rho)
+    phi_rho = rho-1.0
+    chi = exp(-phi_rho**2/0.05) 
+    solution = [ (c1*cos(k[0]*rr) + c2) * chi , sin(k[1]*rr) * chi  ]
+    
+
+    #bump = exp( -(x-0.0)**2/0.025 - (y-0.0)**2/0.025  - (z-1.0)**2/0.025 ) 
+    #solution = [ bump ,  bump ]
+    
+    #solution = [ exp(-phi_rho**2/0.05) , exp(-phi_rho**2/0.05)   ]
+    #solution = [ cos(k[0]*rho)*exp(-phi_rho**2/0.05) , sin(k[1]*rho)*exp(-phi_rho**2/0.05)   ]
+    return solution
+
+
 k = [4.0,4.0]
 levelset_2ball = sqrt(rho) - 1.0 
 helmholtz_2ball = interface_problem(lset=levelset_2ball,
@@ -130,6 +157,13 @@ diffusion_3D = interface_problem(lset = levelset_3D,
                                     dim=3)
 
 
+mu = [1,1]
+k = [1,1]
+helmholtz_3D_ball = interface_problem(lset = levelset_2ball,
+                                    solution = refsol_Helmholtz_2ball(mu,k),
+                                    mu = mu, 
+                                    k = k,
+                                    dim=3)
 
 
 

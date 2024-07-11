@@ -1,0 +1,41 @@
+\documentclass[tikz]{standalone}
+\usetikzlibrary{spy,shapes,shadows}
+\usepackage{filecontents}
+\usepackage{pgfplots}
+
+\begin{document}
+%\begin{tikzpicture}[scale = 1.0,spy using outlines=
+%	{circle, magnification=2.25, connect spies}]
+\begin{tikzpicture}[scale = 1.0]
+\begin{axis}[
+  %every axis plot/.append style={thick},
+  %axis y line*=left,
+  xlabel= { $x$},
+  label style={at={(axis description cs:0.85,0.175)},anchor=north},
+   legend pos = outer north east,
+  %xmin = 0,
+  %xmax = 850,
+  %ymin = -15,
+  %ymax = 38
+]
+\addplot[lightgray,line width=2pt]
+        table[mark=none,x=linecord,y=uval] {../data/3D-comp-fitted-stab-u-eval-reflvl2-p1-mus(1,2)-ks(23,60).dat};
+%\addplot[orange,very thick,dotted] 
+%        table[mark=none,x=l,y=N0] {../data/atmo-dtn-f050-imag.dat};
+% \addplot[violet,very thick,dotted] 
+%        table[mark=none,x=l,y=N2] {../data/atmo-dtn-f050-imag.dat};
+\addplot[red,solid,line width=1pt] 
+        table[mark=none,x=linecord,y=uhval] {../data/3D-comp-fitted-stab-u-eval-reflvl2-p1-mus(1,2)-ks(23,60).dat}; 
+ \addplot[blue,dashed,line width=1pt] 
+        table[mark=none,x=linecord,y=uhval] {../data/3D-comp-unfitted-stab-u-eval-reflvl2-p1-mus(1,2)-ks(23,60).dat};
+\addplot[green!70!black,dashed,line width=1pt] 
+        table[mark=none,x=linecord,y=uhval] {../data/3D-comp-unfitted-eng-u-eval-reflvl2-p1-mus(1,2)-ks(23,60).dat};
+%\legend{$\zeta_{\ell}$,$N = 0$,$N=2$,$N=6$,\texttt{SAI1},\texttt{nonlocal}, }
+  %\coordinate (spypoint) at (axis cs:125,0);
+  %\coordinate (magnifyglass) at (axis cs:40,-30);
+\legend{ref,fitted,unfitted-stab,eng }
+\end{axis}
+ %   \spy [black, size=3cm] on (spypoint)
+ %   in node[fill=white] at (magnifyglass);
+\end{tikzpicture}
+\end{document}
