@@ -27,7 +27,7 @@ def ResolvedGeom(problem,show_plots=False, r_eval=[]):
     #orders = [1,2,3]
     orders = [1]
     #n_ref_max = 5
-    n_ref_max = 4
+    n_ref_max = 5
         
     for order in orders:
         order_geom = order
@@ -101,7 +101,7 @@ def ResolvedGeom(problem,show_plots=False, r_eval=[]):
 domain_type = "concentric-3D"
 
 helmholtz_3D_ball.SetProblemType(well_posed=False)
-helmholtz_3D_ball.SetDomainType(domain_type,ref_lvl = 4)
+helmholtz_3D_ball.SetDomainType(domain_type,ref_lvl = 5)
 mu = [1.0,2.3]
 k = [23,60]
 

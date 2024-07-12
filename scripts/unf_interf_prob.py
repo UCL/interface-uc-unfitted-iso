@@ -67,6 +67,7 @@ def SolveZNoCut(problem, order = 1, n_refs = 0, order_geom = 1, theta_perturb = 
               * Compress(Vh, GetDofsOfElements(Vh, haspos)) \
               * Vh0
 
+    print("Vh_Gamma.ndof = ", Vh_Gamma.ndof )
     # for storing solution
     gfu = GridFunction(Vh_Gamma)
 
