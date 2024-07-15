@@ -6,7 +6,7 @@ from math import pi
 from netgen.csg import *
 import numpy as np
 
-def get_geometry(case_str="nonconvex"):
+def get_geometry(case_str="nonconvex",maxh=None):
     if case_str == "squares":
         geo = CSG2d()
         omega_dom = Rectangle( pmin=(-0.5,-0.5), pmax=(0.5,0.5), mat="omega", bc="bc_omega")
@@ -159,6 +159,7 @@ def get_geometry(case_str="nonconvex"):
         geo.Add(top)
         
         m = geo.GenerateMesh(maxh=1.15)
+        #m = geo.GenerateMesh(maxh=0.5)
         return m
     
     if case_str == "non-convex-3D":
@@ -247,6 +248,7 @@ def get_geometry(case_str="nonconvex"):
         geo = CSGeometry()
         #cube = OrthoBrick( Pnt(-1.35,-1.35,-1.35), Pnt(1.35,1.35,1.35) )
         cube = OrthoBrick( Pnt(-1.5,-1.5,-1.5), Pnt(1.5,1.5,1.5) )
+        
         cube.bc('bc_Omega')
         omega = OrthoBrick( Pnt(-0.6,-0.6,-0.6), Pnt(0.6,0.6,0.6) )
         
@@ -277,3 +279,88 @@ def get_geometry(case_str="nonconvex"):
         
         m = geo.GenerateMesh(maxh=2.0)
         return m
+
+
+    if case_str == "convex-3D-concentric":
+        
+        print("Creating 3D mesh")
+        geo = CSGeometry()
+        
+       
+        cube = OrthoBrick( Pnt(-1.5,-1.5,-1.5), Pnt(1.5,1.5,1.5) )
+        cube.bc('bc_Omega')
+
+        #lower = OrthoBrick( Pnt(-1.5,-1.5,-1.5), Pnt(1.5,1.5,1.2) )
+        #lower.bc('bc_Omega')
+        cutout = OrthoBrick( Pnt(-1.5,-1.5,1.1), Pnt(1.5,1.5,1.5) )
+        lower = cube-cutout
+        top = cube*cutout
+        #cube = lower + top 
+        #cube.bc('bc_Omega')
+        ##top.bc(
+        top.mat("rest") 
+        #lower = cube - top
+        #cube.bc('bc_Omega')
+
+        inside = OrthoBrick( Pnt(-1.1,-1.1,-1.1), Pnt(1.1,1.1,1.1) )
+        inside.mat("only_B")
+        omega = lower - inside 
+        omega.mat("omega")
+
+        geo.Add(inside)
+        geo.Add(omega)
+        geo.Add(top)
+        #geo.Add(inside,maxh=0.5)
+
+        if not maxh:
+            maxh = 0.4
+        m = geo.GenerateMesh(maxh=maxh)
+
+        #cube = OrthoBrick( Pnt(-1.5,-1.5,-1.5), Pnt(1.5,1.5,1.2) )
+        #cube.bc('bc_Omega')
+        #top = OrthoBrick( Pnt(-1.5,-1.5,1.2), Pnt(1.5,1.5,1.5) )
+        #top.bc('bc_Omega')
+
+        #cube_lower = cube - top
+        #cube_upper = top 
+        #top =         top.mat("rest") 
+        #cube.bc('bc_Omega')
+        #ball = Sphere(Pnt(0,0,0),0.8)
+
+        #inside = Sphere(Pnt(0,0,0),1.2)
+        #inside = OrthoBrick( Pnt(-1.1,-1.1,-1.1), Pnt(1.1,1.1,1.1) )
+        #B = inside - ball
+        #B.mat("only_B")
+        #omega = cube - inside 
+        #omega.mat("omega")
+        #geo.Add(ball)
+        #geo.Add(B,maxh = 0.1)
+        #geo.Add(omega)
+        #geo.Add(inside,maxh=0.5)
+        #geo.Add(inside)
+        #geo.Add(top)
+        
+        #m = geo.GenerateMesh(maxh=0.5)
+        return m
+
+
+
+'''
+cube = OrthoBrick( Pnt(-1.5,-1.5,-1.5), Pnt(1.5,1.5,1.1) )
+top = OrthoBrick( Pnt(-1.5,-1.5,1.1), Pnt(1.5,1.5,1.5) )
+top.mat("rest") 
+
+cube.bc('bc_Omega')
+inside = OrthoBrick( Pnt(-1.1,-1.1,-1.1), Pnt(1.1,1.1,1.1) )
+inside.mat("only_B")
+omega = cube - inside 
+omega.mat("omega")
+geo.Add(omega)
+#geo.Add(inside,maxh=0.5)
+geo.Add(inside)
+geo.Add(top)
+
+if not maxh:
+    maxh = 0.5
+m = geo.GenerateMesh(maxh=maxh)
+'''

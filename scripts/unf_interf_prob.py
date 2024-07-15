@@ -297,6 +297,24 @@ def SolveZNoCut(problem, order = 1, n_refs = 0, order_geom = 1, theta_perturb = 
                           filename=vtk_str_mesh, subdivision=0).Do()
             #Draw(mesh)
             #input("")
+        if problem.lset_name == "ball-2-concentric-convex":
+            print("mesh.GetMaterials() = ", mesh.GetMaterials())
+            #domain_values = {'only_B': 0.0 , 'omega':1.0,'rest':0.0}
+            
+            domain_values = {'rest': 0.0 , 'omega': 1.0, 'only_B': 0.0 }
+            values_list = [domain_values[mat]
+                       for mat in mesh.GetMaterials()]
+            cf_subdom = CoefficientFunction(values_list)
+            
+            domain_values_B = {'rest': 0.0 , 'omega': 0.0, 'only_B': 1.0 }
+            values_list_B = [domain_values_B[mat]
+                       for mat in mesh.GetMaterials()]
+            cf_subdom_B = CoefficientFunction(values_list_B)
+
+            vtk_str_mesh = problem.lset_name + "-" "mesh"
+            VTKOutput(ma=mesh, coefs=[cf_subdom,cf_subdom_B  ],
+                          names=["omega","onlyB"],
+                          filename=vtk_str_mesh, subdivision=0).Do()
 
     # measure error and return
     #mat_dom = "only_B|omega"

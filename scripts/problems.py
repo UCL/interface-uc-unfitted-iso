@@ -7,7 +7,7 @@ import numpy as np
 from meshes import get_geometry
 
 class interface_problem():
-    def __init__(self,lset,solution,mu,k,lset_name="ball-4-norm",domain_type=None,dim=2):
+    def __init__(self,lset,solution,mu,k,lset_name="ball-4-norm",domain_type=None,dim=2, pre_refine_lset = False, hlist = None):
         self.lset = lset 
         self.lset_name = lset_name 
         self.solution = solution 
@@ -25,6 +25,8 @@ class interface_problem():
         self.well_posed = False
         self.problem_type = "ip"
         self.eval_pts = []
+        self.pre_refine_lset = pre_refine_lset
+        self.hlist = hlist
     def SetProblemType(self,well_posed):
         self.well_posed = well_posed 
         if self.well_posed:
@@ -40,15 +42,55 @@ class interface_problem():
                         "data-half": "ball-4-norm-data-half", 
                         "non-convex-3D": "ball-2-norm-non-convex-3D",
                         "concentric-3D": "ball-2-norm-concentric",
-                        "concentric-3D-fitted": "ball-2-concentric-fitted"
+                        "concentric-3D-fitted": "ball-2-concentric-fitted",
+                        "convex-3D-concentric": "ball-2-concentric-convex"
                         }
         if domain_type in type_to_name: 
             self.lset_name = type_to_name[domain_type] 
-        for i in range(ref_lvl):
-            mesh = Mesh(get_geometry(case_str= self.domain_type))
-            for n in range(i):
-                mesh.Refine() 
-            self.meshes.append(mesh) 
+            if not self.hlist:
+                for i in range(ref_lvl):
+                    mesh = Mesh(get_geometry(case_str= self.domain_type))
+                    #print("mesh.GetMaterials() = ", mesh.GetMaterials())
+                    #print("mesh.GetBoundaries()) = ", mesh.GetBoundaries())
+                    #Draw(mesh)
+                    #input("")
+                    if self.pre_refine_lset:
+                        for j in range(1):
+                            marks = [ ]
+                            # refinement criterion: check if centroid is close to zero level set  
+                            #centroids = [] 
+                            for el in mesh.Elements():
+                                vs = el.vertices
+                                L = len(el.vertices)
+                                c_x = 0
+                                c_y = 0
+                                c_z = 0
+                                for vert in el.vertices:
+                                    vx,vy,vz = mesh.ngmesh.Points()[vert.nr+1].p
+                                    c_x = c_x + vx
+                                    c_y = c_y + vy
+                                    c_z = c_z + vz
+                                c_x = c_x / L
+                                c_y = c_y / L
+                                c_z = c_z / L
+                                #centroids.append( (c_x,c_y,c_z) )
+                                centroid = (c_x,c_y,c_z)
+                                lset_val = self.lset(mesh(*centroid))
+                                #print("Centroid = {0}, lset value = {1}".format( centroid,  lset_val ))
+                                if  abs(lset_val) <  self.pre_refine_lset:
+                                    marks.append(True)
+                                else:
+                                    marks.append(False)
+                            #print("Number of elements to refine = ",sum(marks))
+                            for el in mesh.Elements():        
+                                mesh.SetRefinementFlag(el,marks[el.nr])
+                            mesh.Refine()
+                    for n in range(i):
+                        mesh.Refine() 
+                    self.meshes.append(mesh)
+            else:
+                for maxh in self.hlist:
+                    self.meshes.append(Mesh(get_geometry(case_str= self.domain_type,maxh=maxh)))
     def Update(self,mu,k,solution):
         self.k = k
         self.mu = mu 
