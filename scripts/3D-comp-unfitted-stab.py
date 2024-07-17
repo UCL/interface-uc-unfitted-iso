@@ -27,7 +27,7 @@ def ResolvedGeom(problem,show_plots=False, r_eval=[]):
     #orders = [1,2,3]
     orders = [1]
     #n_ref_max = 5
-    n_ref_max = 5
+    n_ref_max = 4
         
     for order in orders:
         order_geom = order
@@ -37,27 +37,35 @@ def ResolvedGeom(problem,show_plots=False, r_eval=[]):
         if order == 3:
             stabi_dict["gamma-CIP"] = 1e-3
             stabi_dict["gamma-GLS"] = 1e-3
+        #stabi_dict["alpha-stab"] = 1e-3
+        #stabi_dict["gamma-IF"] = 1e-4
+        #stabi_dict["gamma-data"] = 1e5
+        #stabi_dict["gamma-Geom"] = 1e-2
+
         stabi_dict["alpha-stab"] = 1e-3
         stabi_dict["gamma-IF"] = 1e-4
+        stabi_dict["gamma-IF-H"] = 1e-2
         stabi_dict["gamma-data"] = 1e5
         stabi_dict["gamma-Geom"] = 1e-2
+
         
         l2_errors = [ ]
         ndofs = [ ]
         n_refs = n_ref_max-order
         vtk_output = False
         for n_ref in range(n_refs):
-            if order == 3 and n_ref ==  (n_refs-1):
-                vtk_output = True
-            if order == 1 and n_ref == (n_refs-1):
-               vtk_output = True
-            #if order == 1 and n_ref == 1:
+            #if order == 3 and n_ref ==  (n_refs-1):
             #    vtk_output = True
+            #if order == 1 and n_ref == (n_refs-1):
+            #   vtk_output = True
+            if order == 1 and n_ref == 0:
+                vtk_output = True
             result = SolveZNoCut(problem=problem, order = order, n_refs = n_ref, order_geom=order_geom, order_dual = order, stabi_dict=stabi_dict, geom_stab_all_el = False,vtk_output = vtk_output )
             l2_err = result["rel-l2-err"]
             ndof = result["ndof"]
             l2_errors.append( l2_err)
             ndofs.append(ndof)
+            #input("")
 
             #plt.plot(r_eval, result["u-vals"], label= "u(r)")
             #plt.plot(r_eval, result["uh-vals"], label= "uh(r)")
@@ -101,9 +109,12 @@ def ResolvedGeom(problem,show_plots=False, r_eval=[]):
 domain_type = "concentric-3D"
 
 helmholtz_3D_ball.SetProblemType(well_posed=False)
-helmholtz_3D_ball.SetDomainType(domain_type,ref_lvl = 5)
+helmholtz_3D_ball.SetDomainType(domain_type,ref_lvl = 4)
 mu = [1.0,2.3]
 k = [23,60]
+
+#mu = [1.0,10.0]
+#k = [1.0,1.0]
 
 N_total = 1000
 r_eval = [i*1.4/N_total for i in range(N_total)]

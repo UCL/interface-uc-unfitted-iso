@@ -237,6 +237,7 @@ def get_geometry(case_str="nonconvex",maxh=None):
         geo.Add(omega)
         geo.Add(rest)
         geo.Add(only_B,maxh=0.138)
+        #geo.Add(only_B,maxh=0.136)
         #geo.Add(only_B)
         
         m = geo.GenerateMesh(maxh=2.0)
@@ -344,23 +345,41 @@ def get_geometry(case_str="nonconvex",maxh=None):
         return m
 
 
+    if case_str == "convex-3D-fitted":
+        
+        print("Creating 3D mesh")
+        geo = CSGeometry()
+        
+       
+        cube = OrthoBrick( Pnt(-1.5,-1.5,-1.5), Pnt(1.5,1.5,1.5) )
+        cube.bc('bc_Omega')
 
-'''
-cube = OrthoBrick( Pnt(-1.5,-1.5,-1.5), Pnt(1.5,1.5,1.1) )
-top = OrthoBrick( Pnt(-1.5,-1.5,1.1), Pnt(1.5,1.5,1.5) )
-top.mat("rest") 
+        cutout = OrthoBrick( Pnt(-1.5,-1.5,1.1), Pnt(1.5,1.5,1.5) )
+        lower = cube-cutout
+        top = cube*cutout
+        top.mat("rest") 
 
-cube.bc('bc_Omega')
-inside = OrthoBrick( Pnt(-1.1,-1.1,-1.1), Pnt(1.1,1.1,1.1) )
-inside.mat("only_B")
-omega = cube - inside 
-omega.mat("omega")
-geo.Add(omega)
-#geo.Add(inside,maxh=0.5)
-geo.Add(inside)
-geo.Add(top)
 
-if not maxh:
-    maxh = 0.5
-m = geo.GenerateMesh(maxh=maxh)
-'''
+        Neg = Sphere(Pnt(0,0,0),1.0)
+        inside = OrthoBrick( Pnt(-1.1,-1.1,-1.1), Pnt(1.1,1.1,1.1) )
+        B_inner = inside*Neg
+        B_outer = inside-Neg
+        
+        B_inner.mat("B_inner")
+        B_outer.mat("B_outer")
+        
+        omega = lower-inside 
+        omega.mat("omega")
+
+        geo.Add(B_inner,maxh=0.4)
+        geo.Add(B_outer,maxh=0.4)
+        geo.Add(omega)
+        geo.Add(top)
+        #geo.Add(inside,maxh=0.5)
+
+        if not maxh:
+            maxh = 0.5
+        m = geo.GenerateMesh(maxh=maxh)
+        return m
+        #Draw(m)
+        #input("")

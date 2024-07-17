@@ -26,8 +26,12 @@ def SolvedFittedConcentric(problem,show_plots=False,r_eval=[]):
     #orders = [1,2,3]
     orders = [1]
     #n_ref_max = 5
-    n_ref_max = 4
-        
+    n_ref_max = 4    
+    mat2idx  = {'rest': 1,
+                'B_outer': 1,
+                'B_inner': 0,
+                'omega': 0
+                }
     for order in orders:
         order_geom = order+1
         stabi_dict = { }
@@ -46,18 +50,18 @@ def SolvedFittedConcentric(problem,show_plots=False,r_eval=[]):
         n_refs = n_ref_max-order
         vtk_output = False
         for n_ref in range(n_refs):
-            if order == 3 and n_ref ==  (n_refs-1):
-                vtk_output = True
-            if order == 1 and n_ref == (n_refs-1):
-               vtk_output = True
-            #if order == 1 and n_ref == 1:
+            #if order == 3 and n_ref ==  (n_refs-1):
             #    vtk_output = True
-            result = SolveFitted(problem=problem, order = order, n_refs = n_ref, order_geom=order_geom, order_dual = order, stabi_dict=stabi_dict, geom_stab_all_el = False,vtk_output = vtk_output )
+            #if order == 1 and n_ref == (n_refs-1):
+            #   vtk_output = True
+            if order == 1 and n_ref == 0:
+                vtk_output = True
+            result = SolveFitted(problem=problem, order = order, n_refs = n_ref, order_geom=order_geom, order_dual = order, stabi_dict=stabi_dict, geom_stab_all_el = False,vtk_output = vtk_output,mat2idx = mat2idx)
             l2_err = result["rel-l2-err"]
             ndof = result["ndof"]
             l2_errors.append( l2_err)
             ndofs.append(ndof)
-
+            #input("")
             #plt.plot(r_eval, result["u-vals"], label= "u(r)")
             #plt.plot(r_eval, result["uh-vals"], label= "uh(r)")
             #plt.show() 
@@ -107,9 +111,9 @@ N_total = 1000
 r_eval = [i*1.4/N_total for i in range(N_total)]
 helmholtz_3D_ball.eval_pts= [ (rr, 0.0, 0.0 ) for rr in r_eval ]
 
-mu = [1.0,2.3]
-k = [23,60]
-#mu = [1.0,1.0]
-#k = [1.0,1.0]
+#mu = [1.0,2.3]
+#k = [23,60]
+mu = [1.0,10.0]
+k = [1.0,1.0]
 helmholtz_3D_ball.Update(mu=mu,k=k,solution= refsol_Helmholtz_2ball(mu=mu,k=k))
 SolvedFittedConcentric(problem=helmholtz_3D_ball ,show_plots=True, r_eval=r_eval)

@@ -43,7 +43,8 @@ class interface_problem():
                         "non-convex-3D": "ball-2-norm-non-convex-3D",
                         "concentric-3D": "ball-2-norm-concentric",
                         "concentric-3D-fitted": "ball-2-concentric-fitted",
-                        "convex-3D-concentric": "ball-2-concentric-convex"
+                        "convex-3D-concentric": "ball-2-concentric-convex",
+                        "convex-3D-fitted": "ball-2-convex-fitted"
                         }
         if domain_type in type_to_name: 
             self.lset_name = type_to_name[domain_type] 

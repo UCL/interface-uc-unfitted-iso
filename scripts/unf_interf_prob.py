@@ -15,6 +15,10 @@ def SolveZNoCut(problem, order = 1, n_refs = 0, order_geom = 1, theta_perturb = 
         gamma_IF = stabi_dict["gamma-IF"]
         gamma_data = stabi_dict["gamma-data"]
         gamma_geom = stabi_dict["gamma-Geom"] 
+        if stabi_dict["gamma-IF-H"]:
+            gamma_IF_H = stabi_dict["gamma-IF-H"]
+        else:
+            gamma_IF_H = gamma_IF
    
     # retrieve problem parameters
     mu = problem.mu
@@ -152,7 +156,8 @@ def SolveZNoCut(problem, order = 1, n_refs = 0, order_geom = 1, theta_perturb = 
     a += sum( gamma_geom   *  sdfm[i]  * h**(2*min(order,order_geom) ) * grad( u[i]) * grad(v[i]) * dGeom[i] for i in [0, 1])
 
     # J-Gamma(u_h,v_h)
-    a += gamma_IF * (mubar/h) * (u[0] - u[1]) * (v[0] - v[1])  * ds 
+    #a += gamma_IF * (mubar/h) * (u[0] - u[1]) * (v[0] - v[1])  * ds 
+    a += gamma_IF_H  * (mubar/h) * (u[0] - u[1]) * (v[0] - v[1])  * ds 
     a += gamma_IF * h * jump_flux_u * jump_flux_v * ds 
     a += gamma_IF * mubar * h * jump_tangential_u * jump_tangential_v * ds  
     # J-CIP(u_h,v_h)
@@ -311,9 +316,10 @@ def SolveZNoCut(problem, order = 1, n_refs = 0, order_geom = 1, theta_perturb = 
                        for mat in mesh.GetMaterials()]
             cf_subdom_B = CoefficientFunction(values_list_B)
 
+            cf_subdom_f = IfPos(-lsetp1, coef_f[0], coef_f[1])  
             vtk_str_mesh = problem.lset_name + "-" "mesh"
-            VTKOutput(ma=mesh, coefs=[cf_subdom,cf_subdom_B  ],
-                          names=["omega","onlyB"],
+            VTKOutput(ma=mesh, coefs=[cf_subdom,cf_subdom_B , cf_subdom_f ],
+                          names=["omega","onlyB","f"],
                           filename=vtk_str_mesh, subdivision=0).Do()
 
     # measure error and return
@@ -358,14 +364,14 @@ def SolveZNoCut(problem, order = 1, n_refs = 0, order_geom = 1, theta_perturb = 
     return result 
 
 
-def TransformToMaterialCF(mesh,fun):
+def TransformToMaterialCF(mesh,fun,mat2idx):
 
-    fun_vals = {'rest': fun[1],  'B_outer': fun[1], 'B_inner': fun[0], 'omega':fun[0] }
+    fun_vals = {'rest': fun[mat2idx['rest']],  'B_outer': fun[mat2idx['B_outer']],   'B_inner': fun[mat2idx['B_inner']], 'omega':fun[mat2idx['omega']] }
     fun_material_CF = mesh.MaterialCF(fun_vals)
     return fun_material_CF 
 
 
-def SolveFitted(problem, order = 1, n_refs = 0, order_geom = 1, theta_perturb = None, order_dual = 1, stabi_dict = None, geom_stab_all_el = True, vtk_output = False,adjoint_consistent=True, delta_p=None,solver="sparsecholesky"): 
+def SolveFitted(problem, order = 1, n_refs = 0, order_geom = 1, theta_perturb = None, order_dual = 1, stabi_dict = None, geom_stab_all_el = True, vtk_output = False,adjoint_consistent=True, delta_p=None,solver="sparsecholesky",mat2idx={} ): 
 
     # retrieving stabilization parameters
     if stabi_dict != None:
@@ -381,12 +387,14 @@ def SolveFitted(problem, order = 1, n_refs = 0, order_geom = 1, theta_perturb = 
     
     #print("mesh.GetMaterials() = ", mesh.GetMaterials())
     #print("mesh.GetBoundaries()) = ", mesh.GetBoundaries())
+    #Draw(mesh)
+    #input("")
 
-    mu = TransformToMaterialCF(mesh,problem.mu)
-    k = TransformToMaterialCF(mesh,problem.k)
-    solution = TransformToMaterialCF(mesh,problem.solution)
-    sol_gradient = TransformToMaterialCF(mesh,problem.gradient)
-    coef_f = TransformToMaterialCF(mesh,problem.coef_f)
+    mu = TransformToMaterialCF(mesh,problem.mu,mat2idx)
+    k = TransformToMaterialCF(mesh,problem.k,mat2idx)
+    solution = TransformToMaterialCF(mesh,problem.solution,mat2idx)
+    sol_gradient = TransformToMaterialCF(mesh,problem.gradient, mat2idx)
+    coef_f = TransformToMaterialCF(mesh,problem.coef_f,mat2idx)
 
     
     # background FE space for primal variable
@@ -399,6 +407,8 @@ def SolveFitted(problem, order = 1, n_refs = 0, order_geom = 1, theta_perturb = 
     Vh0 = H1(mesh, order=order_dual, dirichlet="bc_Omega",dgjumps=False)
     Vh_Gamma = Vh * Vh0
 
+    print("Vh_Gamma.ndof = ", Vh_Gamma.ndof )
+    
     # for storing solution
     gfu = GridFunction(Vh_Gamma)
     gfuh = gfu.components
@@ -469,35 +479,36 @@ def SolveFitted(problem, order = 1, n_refs = 0, order_geom = 1, theta_perturb = 
     gfu.vec.data += a.mat.Inverse(Vh_Gamma.FreeDofs(),inverse=solver  )* f.vec
      
     # Export to vtk if required
-    #if vtk_output: 
-    if False: 
-        vtk_str = problem.lset_name + "-" + problem.problem_type + "-p{0}".format(order)+"-q{0}".format(order_geom)+"-mus({0},{1})".format(int(mu[0]),int(mu[1]))+"-ks({0},{1})".format(int(k[0]),int(k[1]))+"-lvl{0}".format(n_refs)
-        #VTKOutput(ma=mesh, coefs=[lsetp1, IfPos(-lsetp1, solution[0], solution[1]) ,  IfPos(-lsetp1, sqrt((gfu.components[0]-solution[0])**2) , sqrt((gfu.components[1]-solution[1])**2)) ],
-        #              names=["P1-levelset", "u", "error"],
-        #              filename=vtk_str, subdivision=2).Do()
-
-        VTKOutput(ma=mesh, coefs=[lsetp1, IfPos(-lsetp1, solution[0], solution[1]) ,  IfPos(-lsetp1, sqrt((gfu.components[0]-solution[0])**2) , sqrt((gfu.components[1]-solution[1])**2)), IfPos(-lsetp1,gfu.components[0] , gfu.components[1]) ],
-                      names=["P1-levelset", "u", "error","uh"],
+    if vtk_output:
+        print("producing vtk output")
+    #if False: 
+        vtk_str = "debug"
+        VTKOutput(ma=mesh, coefs=[ solution, gfuh[0], sqrt((gfuh[0]- solution)**2)  ],
+                      names=["u", "uh", "error"],
                       filename=vtk_str, subdivision=0).Do()
 
+        #VTKOutput(ma=mesh, coefs=[lsetp1, IfPos(-lsetp1, solution[0], solution[1]) ,  IfPos(-lsetp1, sqrt((gfu.components[0]-solution[0])**2) , sqrt((gfu.components[1]-solution[1])**2)), IfPos(-lsetp1,gfu.components[0] , gfu.components[1]) ],
+         #             names=["P1-levelset", "u", "error","uh"],
+         #             filename=vtk_str, subdivision=0).Do()
+
         #if problem.lset_name == "ball-2-norm-concentric":
-        if False:
+        if True:
             print("mesh.GetMaterials() = ", mesh.GetMaterials())
             #domain_values = {'only_B': 0.0 , 'omega':1.0,'rest':0.0}
             
-            domain_values = {'rest': 0.0 , 'omega': 1.0, 'only_B': 0.0 }
+            domain_values = {'rest': 0.0,  'B_outer': 0.0,   'B_inner': 1.0, 'omega':1.0 }
             values_list = [domain_values[mat]
                        for mat in mesh.GetMaterials()]
             cf_subdom = CoefficientFunction(values_list)
             
-            domain_values_B = {'rest': 0.0 , 'omega': 0.0, 'only_B': 1.0 }
-            values_list_B = [domain_values_B[mat]
-                       for mat in mesh.GetMaterials()]
-            cf_subdom_B = CoefficientFunction(values_list_B)
+            #domain_values_B = {'rest': 0.0 , 'omega': 0.0, 'only_B': 1.0 }
+            #values_list_B = [domain_values_B[mat]
+            #           for mat in mesh.GetMaterials()]
+            #cf_subdom_B = CoefficientFunction(values_list_B)
 
-            vtk_str_mesh = problem.lset_name + "-" "mesh"
-            VTKOutput(ma=mesh, coefs=[cf_subdom,cf_subdom_B  ],
-                          names=["omega","onlyB"],
+            vtk_str_mesh = "fitted" + "-" "mesh"
+            VTKOutput(ma=mesh, coefs=[cf_subdom],
+                          names=["inner"],
                           filename=vtk_str_mesh, subdivision=0).Do()
     #Draw(mesh)
     #Draw(solution,mesh,"sol")
@@ -645,19 +656,19 @@ def SolveEngineering(problem, order = 1, n_refs = 0, order_geom = 1, theta_pertu
     gfu.vec.data += a.mat.Inverse(Vh_Gamma.FreeDofs(),inverse=solver  )* f.vec
      
     # Export to vtk if required
-    #if vtk_output: 
-    if False: 
+    if vtk_output: 
+    #if False: 
         vtk_str = problem.lset_name + "-" + problem.problem_type + "-p{0}".format(order)+"-q{0}".format(order_geom)+"-mus({0},{1})".format(int(mu[0]),int(mu[1]))+"-ks({0},{1})".format(int(k[0]),int(k[1]))+"-lvl{0}".format(n_refs)
         #VTKOutput(ma=mesh, coefs=[lsetp1, IfPos(-lsetp1, solution[0], solution[1]) ,  IfPos(-lsetp1, sqrt((gfu.components[0]-solution[0])**2) , sqrt((gfu.components[1]-solution[1])**2)) ],
         #              names=["P1-levelset", "u", "error"],
         #              filename=vtk_str, subdivision=2).Do()
 
-        VTKOutput(ma=mesh, coefs=[lsetp1, IfPos(-lsetp1, solution[0], solution[1]) ,  IfPos(-lsetp1, sqrt((gfu.components[0]-solution[0])**2) , sqrt((gfu.components[1]-solution[1])**2)), IfPos(-lsetp1,gfu.components[0] , gfu.components[1]) ],
-                      names=["P1-levelset", "u", "error","uh"],
-                      filename=vtk_str, subdivision=0).Do()
+        #VTKOutput(ma=mesh, coefs=[lsetp1, IfPos(-lsetp1, solution[0], solution[1]) ,  IfPos(-lsetp1, sqrt((gfu.components[0]-solution[0])**2) , sqrt((gfu.components[1]-solution[1])**2)), IfPos(-lsetp1,gfu.components[0] , gfu.components[1]) ],
+        #              names=["P1-levelset", "u", "error","uh"],
+        #              filename=vtk_str, subdivision=0).Do()
 
         #if problem.lset_name == "ball-2-norm-concentric":
-        if False:
+        if True:
             print("mesh.GetMaterials() = ", mesh.GetMaterials())
             #domain_values = {'only_B': 0.0 , 'omega':1.0,'rest':0.0}
             

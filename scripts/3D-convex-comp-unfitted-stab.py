@@ -45,7 +45,7 @@ def ResolvedGeom(problem,show_plots=False, r_eval=[],n_ref_max=5 ):
         l2_errors = [ ]
         ndofs = [ ]
         #n_refs = n_ref_max-order
-        n_refs = n_ref_max
+        n_refs = n_ref_max + 1 - order
         vtk_output = False
         for n_ref in range(n_refs):
             #if order == 3 and n_ref ==  (n_refs-1):
@@ -123,7 +123,7 @@ helmholtz_3D_ball = interface_problem(lset = levelset_2ball,
                                     dim=3,
                                     pre_refine_lset = 0.2
                                       )
-helmholtz_3D_ball.SetProblemType(well_posed=False)
+helmholtz_3D_ball.SetProblemType(well_posed=True)
 helmholtz_3D_ball.SetDomainType(domain_type,ref_lvl = 4)
 N_total = 1000
 r_eval = [i*1.4/N_total for i in range(N_total)]
