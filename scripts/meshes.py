@@ -236,10 +236,11 @@ def get_geometry(case_str="nonconvex",maxh=None):
 
         geo.Add(omega)
         geo.Add(rest)
-        geo.Add(only_B,maxh=0.138)
-        #geo.Add(only_B,maxh=0.136)
+        geo.Add(only_B,maxh=0.35)
+        #geo.Add(only_B,maxh=0.138)
         #geo.Add(only_B)
         
+        #m = geo.GenerateMesh(maxh=2.0)
         m = geo.GenerateMesh(maxh=2.0)
         return m
     

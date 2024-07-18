@@ -12,8 +12,7 @@ np.random.seed(123)
 
 from unf_interf_prob import SolveZNoCut,SolveFitted 
 from meshes import get_geometry
-from problems import helmholtz_3D_ball, refsol_Helmholtz_2ball
-
+from problems import interface_problem, levelset_2ball, refsol_Helmholtz_2ball
 
 def ResolvedGeom(problem,show_plots=False, r_eval=[]):
     domain_type = problem.domain_type
@@ -30,7 +29,7 @@ def ResolvedGeom(problem,show_plots=False, r_eval=[]):
     n_ref_max = 4
         
     for order in orders:
-        order_geom = order
+        order_geom = order+1
         stabi_dict = { }
         stabi_dict["gamma-CIP"] = 1e-3
         stabi_dict["gamma-GLS"] = 1e-3
@@ -108,11 +107,18 @@ def ResolvedGeom(problem,show_plots=False, r_eval=[]):
 
 domain_type = "concentric-3D"
 
-helmholtz_3D_ball.SetProblemType(well_posed=False)
-helmholtz_3D_ball.SetDomainType(domain_type,ref_lvl = 4)
 mu = [1.0,2.3]
 k = [23,60]
 
+helmholtz_3D_ball = interface_problem(lset = levelset_2ball,
+                                    solution = refsol_Helmholtz_2ball(mu,k),
+                                    mu = mu,
+                                    k = k,
+                                    dim=3,
+                                    pre_refine_lset = 0.2
+                                      )
+helmholtz_3D_ball.SetProblemType(well_posed=False)
+helmholtz_3D_ball.SetDomainType(domain_type,ref_lvl = 4)
 #mu = [1.0,10.0]
 #k = [1.0,1.0]
 
