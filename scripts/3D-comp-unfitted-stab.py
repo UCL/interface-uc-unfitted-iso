@@ -26,10 +26,10 @@ def ResolvedGeom(problem,show_plots=False, r_eval=[]):
     #orders = [1,2,3]
     orders = [1]
     #n_ref_max = 5
-    n_ref_max = 4
+    n_ref_max = 5
         
     for order in orders:
-        order_geom = order+1
+        order_geom = order
         stabi_dict = { }
         stabi_dict["gamma-CIP"] = 1e-3
         stabi_dict["gamma-GLS"] = 1e-3
@@ -42,10 +42,10 @@ def ResolvedGeom(problem,show_plots=False, r_eval=[]):
         #stabi_dict["gamma-Geom"] = 1e-2
 
         stabi_dict["alpha-stab"] = 1e-3
-        stabi_dict["gamma-IF"] = 1e-4
-        stabi_dict["gamma-IF-H"] = 1e-2
+        stabi_dict["gamma-IF"] = 1e-5
+        stabi_dict["gamma-IF-H"] = 1e-5
         stabi_dict["gamma-data"] = 1e5
-        stabi_dict["gamma-Geom"] = 1e-2
+        stabi_dict["gamma-Geom"] = 1e-5
 
         
         l2_errors = [ ]
@@ -57,7 +57,7 @@ def ResolvedGeom(problem,show_plots=False, r_eval=[]):
             #    vtk_output = True
             #if order == 1 and n_ref == (n_refs-1):
             #   vtk_output = True
-            if order == 1 and n_ref == 0:
+            if order == 1 and n_ref == 0 or n_ref == 2:
                 vtk_output = True
             result = SolveZNoCut(problem=problem, order = order, n_refs = n_ref, order_geom=order_geom, order_dual = order, stabi_dict=stabi_dict, geom_stab_all_el = False,vtk_output = vtk_output )
             l2_err = result["rel-l2-err"]
@@ -118,7 +118,7 @@ helmholtz_3D_ball = interface_problem(lset = levelset_2ball,
                                     pre_refine_lset = 0.2
                                       )
 helmholtz_3D_ball.SetProblemType(well_posed=False)
-helmholtz_3D_ball.SetDomainType(domain_type,ref_lvl = 4)
+helmholtz_3D_ball.SetDomainType(domain_type,ref_lvl = 5)
 #mu = [1.0,10.0]
 #k = [1.0,1.0]
 
