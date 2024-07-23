@@ -25,8 +25,8 @@ def ResolvedGeom(problem,show_plots=False, r_eval=[]):
     ndofs_order = []  
     #orders = [1,2,3]
     orders = [1]
-    #n_ref_max = 5
     n_ref_max = 5
+    #n_ref_max = 4
         
     for order in orders:
         order_geom = order
@@ -36,16 +36,16 @@ def ResolvedGeom(problem,show_plots=False, r_eval=[]):
         if order == 3:
             stabi_dict["gamma-CIP"] = 1e-3
             stabi_dict["gamma-GLS"] = 1e-3
-        #stabi_dict["alpha-stab"] = 1e-3
-        #stabi_dict["gamma-IF"] = 1e-4
-        #stabi_dict["gamma-data"] = 1e5
-        #stabi_dict["gamma-Geom"] = 1e-2
-
         stabi_dict["alpha-stab"] = 1e-3
-        stabi_dict["gamma-IF"] = 1e-5
-        stabi_dict["gamma-IF-H"] = 1e-5
+        stabi_dict["gamma-IF"] = 1e-4
         stabi_dict["gamma-data"] = 1e5
-        stabi_dict["gamma-Geom"] = 1e-5
+        stabi_dict["gamma-Geom"] = 1e-2
+
+        #stabi_dict["alpha-stab"] = 1e-3
+        #stabi_dict["gamma-IF"] = 1e-5
+        #stabi_dict["gamma-IF-H"] = 1e-5
+        #stabi_dict["gamma-data"] = 1e5
+        #stabi_dict["gamma-Geom"] = 1e-5
 
         
         l2_errors = [ ]
@@ -107,8 +107,15 @@ def ResolvedGeom(problem,show_plots=False, r_eval=[]):
 
 domain_type = "concentric-3D"
 
-mu = [1.0,2.3]
-k = [23,60]
+#mu = [1.0,2.3]
+#k = [23,60]
+
+#mu = [1.0,10.0]
+#k = [5,10]
+#k = [10,24]
+
+mu = [3.0,6.0]
+k = [10,30]
 
 helmholtz_3D_ball = interface_problem(lset = levelset_2ball,
                                     solution = refsol_Helmholtz_2ball(mu,k),
@@ -118,12 +125,13 @@ helmholtz_3D_ball = interface_problem(lset = levelset_2ball,
                                     pre_refine_lset = 0.2
                                       )
 helmholtz_3D_ball.SetProblemType(well_posed=False)
-helmholtz_3D_ball.SetDomainType(domain_type,ref_lvl = 5)
+helmholtz_3D_ball.SetDomainType(domain_type,ref_lvl = 4)
 #mu = [1.0,10.0]
 #k = [1.0,1.0]
 
 N_total = 1000
-r_eval = [i*1.4/N_total for i in range(N_total)]
+r_eval = [i*1.5/N_total for i in range(N_total-1)]
+#r_eval = [ 0.47+i*1.0/N_total for i in range(N_total)]
 helmholtz_3D_ball.eval_pts= [ (rr, 0.0, 0.0 ) for rr in r_eval ]
 #mu = [1.0,1.0]
 #k = [1.0,1.0]

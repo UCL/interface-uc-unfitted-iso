@@ -5,7 +5,7 @@ import numpy as np
 np.random.seed(123)
 
 def SolveZNoCut(problem, order = 1, n_refs = 0, order_geom = 1, theta_perturb = None, order_dual = 1, stabi_dict = None, geom_stab_all_el = True, vtk_output = False,adjoint_consistent=True,
-                delta_p=None,solver="sparsecholesky" ): 
+                delta_p=None,solver="sparsecholesky",extra_bc=None ): 
 
     # retrieving stabilization parameters
     if stabi_dict != None:
@@ -15,9 +15,9 @@ def SolveZNoCut(problem, order = 1, n_refs = 0, order_geom = 1, theta_perturb = 
         gamma_IF = stabi_dict["gamma-IF"]
         gamma_data = stabi_dict["gamma-data"]
         gamma_geom = stabi_dict["gamma-Geom"] 
-        if stabi_dict["gamma-IF-H"]:
+        try: 
             gamma_IF_H = stabi_dict["gamma-IF-H"]
-        else:
+        except:
             gamma_IF_H = gamma_IF
    
     # retrieve problem parameters
@@ -29,6 +29,12 @@ def SolveZNoCut(problem, order = 1, n_refs = 0, order_geom = 1, theta_perturb = 
     sol_gradient = problem.gradient
     coef_f = problem.coef_f
     mesh = problem.meshes[n_refs]
+
+
+    #print("mesh.GetMaterials() = ", mesh.GetMaterials())
+    #print("mesh.GetBoundaries()) = ", mesh.GetBoundaries())
+    #Draw(mesh)
+    #input("")
 
     #if problem.domain_type == "squares":
     #    domain_values = {'only_B': 1.0, 'omega':1.0,'full':0.0}
@@ -53,9 +59,18 @@ def SolveZNoCut(problem, order = 1, n_refs = 0, order_geom = 1, theta_perturb = 
 
     # background FE space for primal variable
     if problem.well_posed:
-        Vh = H1(mesh, order=order, dirichlet="bc_Omega",dgjumps=True)
+        dirichlet ="bc_Omega"
+        if extra_bc != None:
+            dirichlet += "|"+extra_bc
+            print("dirichlet = ", dirichlet)
+        #Vh = H1(mesh, order=order, dirichlet="bc_Omega",dgjumps=True)
+        Vh = H1(mesh, order=order, dirichlet=dirichlet,dgjumps=True)
     else:
-        Vh = H1(mesh, order=order, dirichlet=[],dgjumps=True)
+        if extra_bc != None:
+            Vh = H1(mesh, order=order, dirichlet=extra_bc,dgjumps=True)
+        else:
+            Vh = H1(mesh, order=order, dirichlet=[],dgjumps=True)
+
     
     # continuous space for dual variable
     Vh0 = H1(mesh, order=order_dual, dirichlet="bc_Omega",dgjumps=False)

@@ -152,6 +152,8 @@ def refsol_Helmholtz_2ball(mu,k):
 
 
 def refsol_Helmholtz_2ball(mu,k):
+    #alpha = 1/0.05
+    alpha = 1
     #k = [k[0]/(2*pi),k[1]/(2*pi)]
     k = [k[0],k[1]]
     #c2 = -(k[1]/k[0])*(mu[1]/mu[0])*cos(k[1])/sin(k[0])
@@ -161,7 +163,7 @@ def refsol_Helmholtz_2ball(mu,k):
     c2 =  sin(k[1]) - c1 * cos(k[0])
     rr = sqrt(rho)
     phi_rho = rho-1.0
-    chi = exp(-phi_rho**2/0.05) 
+    chi = exp(-phi_rho**2*alpha) 
     solution = [ (c1*cos(k[0]*rr) + c2) * chi , sin(k[1]*rr) * chi  ]
     
 
