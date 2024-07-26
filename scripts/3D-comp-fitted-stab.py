@@ -21,6 +21,7 @@ def SolvedFittedConcentric(problem,show_plots=False,r_eval=[]):
     k = problem.k
     print("Running ResolvedGeom")
     l2_errors_order = [] 
+    h1s_errors_order = [] 
     l2_errors_order_NoIF = [] 
     ndofs_order = []  
     #orders = [1,2,3]
@@ -33,7 +34,7 @@ def SolvedFittedConcentric(problem,show_plots=False,r_eval=[]):
                 'omega': 0
                 }
     for order in orders:
-        order_geom = order+1
+        order_geom = order
         stabi_dict = { }
         stabi_dict["gamma-CIP"] = 1e-3
         stabi_dict["gamma-GLS"] = 1e-3
@@ -46,6 +47,7 @@ def SolvedFittedConcentric(problem,show_plots=False,r_eval=[]):
         stabi_dict["gamma-Geom"] = 1e-2
         
         l2_errors = [ ]
+        h1s_errors = [] 
         ndofs = [ ]
         n_refs = n_ref_max-order
         vtk_output = False
@@ -61,6 +63,7 @@ def SolvedFittedConcentric(problem,show_plots=False,r_eval=[]):
             ndof = result["ndof"]
             l2_errors.append( l2_err)
             ndofs.append(ndof)
+            h1s_errors.append(result["rel-h1sem-err"])
             #input("")
             #plt.plot(r_eval, result["u-vals"], label= "u(r)")
             #plt.plot(r_eval, result["uh-vals"], label= "uh(r)")
@@ -76,6 +79,7 @@ def SolvedFittedConcentric(problem,show_plots=False,r_eval=[]):
         
 
         l2_errors_order.append(l2_errors)
+        h1s_errors_order.append(h1s_errors) 
         ndofs_order.append(ndofs)
         print("ndofs = ", ndofs)
         print(" l2_errors = ", l2_errors )
@@ -84,8 +88,8 @@ def SolvedFittedConcentric(problem,show_plots=False,r_eval=[]):
 
         mesh_width = np.array(ndofs)**(-1/3)
         name_str = "3D-comp-fitted-stab" + "-" + problem_type + "-p{0}".format(order)+"-q{0}".format(order_geom)+"-mus({0},{1})".format(int(mu[0]),int(mu[1]))+"-ks({0},{1})".format(int(k[0]),int(k[1]))+".dat" 
-        results = [np.array(ndofs,dtype=float),mesh_width, np.array(l2_errors,dtype=float)]
-        header_str = "ndof h rel-L2-err-B"
+        results = [np.array(ndofs,dtype=float),mesh_width, np.array(l2_errors,dtype=float), np.array(h1s_errors,dtype=float)]
+        header_str = "ndof h rel-L2-err-B rel-H1s-err-B"
         np.savetxt(fname ="../data/{0}".format(name_str),
                            X = np.transpose(results),
                            header = header_str,
@@ -104,7 +108,7 @@ def SolvedFittedConcentric(problem,show_plots=False,r_eval=[]):
 
 domain_type = "concentric-3D-fitted"
 
-mu = [3.0,6.0]
+mu = [3.0,30.0]
 k = [10,30]
 
 helmholtz_3D_ball = interface_problem(lset = levelset_2ball,

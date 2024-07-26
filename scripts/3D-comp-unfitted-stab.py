@@ -21,7 +21,8 @@ def ResolvedGeom(problem,show_plots=False, r_eval=[]):
     k = problem.k
     print("Running ResolvedGeom")
     l2_errors_order = [] 
-    l2_errors_order_NoIF = [] 
+    l2_errors_order_NoIF = []
+    h1s_errors_order = [] 
     ndofs_order = []  
     #orders = [1,2,3]
     orders = [1]
@@ -49,6 +50,7 @@ def ResolvedGeom(problem,show_plots=False, r_eval=[]):
 
         
         l2_errors = [ ]
+        h1s_errors = [] 
         ndofs = [ ]
         n_refs = n_ref_max-order
         vtk_output = False
@@ -64,6 +66,7 @@ def ResolvedGeom(problem,show_plots=False, r_eval=[]):
             ndof = result["ndof"]
             l2_errors.append( l2_err)
             ndofs.append(ndof)
+            h1s_errors.append(result["rel-h1sem-err"])
             #input("")
 
             #plt.plot(r_eval, result["u-vals"], label= "u(r)")
@@ -87,8 +90,8 @@ def ResolvedGeom(problem,show_plots=False, r_eval=[]):
 
         mesh_width = np.array(ndofs)**(-1/3)
         name_str = "3D-comp-unfitted-stab" + "-"  + "-p{0}".format(order)+"-q{0}".format(order_geom)+"-mus({0},{1})".format(int(mu[0]),int(mu[1]))+"-ks({0},{1})".format(int(k[0]),int(k[1]))+".dat" 
-        results = [np.array(ndofs,dtype=float),mesh_width, np.array(l2_errors,dtype=float)]
-        header_str = "ndof h rel-L2-err-B"
+        results = [np.array(ndofs,dtype=float),mesh_width, np.array(l2_errors,dtype=float),np.array(h1s_errors,dtype=float)]
+        header_str = "ndof h rel-L2-err-B rel-H1s-err-B"
         np.savetxt(fname ="../data/{0}".format(name_str),
                            X = np.transpose(results),
                            header = header_str,
@@ -114,7 +117,8 @@ domain_type = "concentric-3D"
 #k = [5,10]
 #k = [10,24]
 
-mu = [3.0,6.0]
+#mu = [3.0,6.0]
+mu = [3.0,30.0]
 k = [10,30]
 
 helmholtz_3D_ball = interface_problem(lset = levelset_2ball,

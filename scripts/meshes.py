@@ -238,7 +238,7 @@ def get_geometry(case_str="nonconvex",maxh=None):
 
         geo.Add(omega)
         geo.Add(rest)
-        geo.Add(only_B,maxh=0.334)
+        geo.Add(only_B,maxh=0.37)
         #geo.Add(only_B,maxh=0.138)
         #geo.Add(only_B)
         
@@ -311,14 +311,14 @@ def get_geometry(case_str="nonconvex",maxh=None):
         geo.Add(omega)
         #geo.Add(B_inner)
         #geo.Add(B_outer)
-        geo.Add(B_inner,maxh=0.21)
-        geo.Add(B_outer,maxh=0.21)
+        geo.Add(B_inner,maxh=0.232)
+        geo.Add(B_outer,maxh=0.232)
         geo.Add(rest)
         
         #geo.Add(only_B,maxh=0.3)
         #geo.Add(only_B)
         
-        m = geo.GenerateMesh(maxh=0.5)
+        m = geo.GenerateMesh(maxh=0.65)
         return m
 
 
