@@ -42,7 +42,7 @@ def ResolvedGeom(problem,show_plots=False, r_eval=[]):
         stabi_dict["gamma-data"] = 1e5
         stabi_dict["gamma-Geom"] = 1e-2
         if order > 1:
-            stabi_dict["gamma-IF-H"] = 1e-1
+            stabi_dict["gamma-IF-H"] = 5e-1
 
         #stabi_dict["alpha-stab"] = 1e-3
         #stabi_dict["gamma-IF"] = 1e-5
