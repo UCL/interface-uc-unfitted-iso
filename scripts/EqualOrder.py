@@ -28,6 +28,7 @@ def EqualOrderExp(problem,solver="sparsecholesky",show_plots=False):
         l2_errors = [] 
         grad_errors = [] 
         ndofs = [] 
+        #n_ref_max = 8
         n_ref_max = 8
         
         stabi_dict = None 
@@ -46,38 +47,46 @@ def EqualOrderExp(problem,solver="sparsecholesky",show_plots=False):
         if domain_type == "squares":
             stabi_dict = { } 
 
-            if k[0] == k[1] == 0:
+            if order == 1:
+                stabi_dict["gamma-CIP"] = 5*10**(-1)
+                stabi_dict["gamma-GLS"] = 5*10**(-1)
+            elif order == 2:
+                stabi_dict["gamma-CIP"] = 5*10**(-2)
+                stabi_dict["gamma-GLS"] = 5*10**(-2)
+            else:
+                stabi_dict["gamma-CIP"] = 1*10**(-3)
+                stabi_dict["gamma-GLS"] = 1*10**(-3)
 
-                if order == 1:
-                    stabi_dict["gamma-CIP"] = 5*10**(-1)
-                    stabi_dict["gamma-GLS"] = 5*10**(-1)
-                elif order == 2:
-                    stabi_dict["gamma-CIP"] = 5*10**(-2)
-                    stabi_dict["gamma-GLS"] = 5*10**(-2)
-                else:
-                    stabi_dict["gamma-CIP"] = 1*10**(-3)
-                    stabi_dict["gamma-GLS"] = 1*10**(-3)
+            stabi_dict["alpha-stab"] = 1e-5
+            stabi_dict["gamma-IF"] = 1e-3
+            stabi_dict["gamma-data"] = 1e5
+            stabi_dict["gamma-Geom"] = 1e-2 
 
-                stabi_dict["alpha-stab"] = 1e-5
-                stabi_dict["gamma-IF"] = 1e-3
-                stabi_dict["gamma-data"] = 1e5
-                stabi_dict["gamma-Geom"] = 1e-2 
+        if domain_type == "squares-easy":
+            stabi_dict = { } 
                     
-            else: 
-                stabi_dict["alpha-stab"] = 1e-5
-                stabi_dict["gamma-IF"] = 1e-2
+            if order == 1:
+                stabi_dict["gamma-CIP"] = 1e-5
+                stabi_dict["gamma-GLS"] = 1e-3
+                stabi_dict["alpha-stab"] = 1e-3
+                stabi_dict["gamma-IF"] = 1e-4
                 stabi_dict["gamma-data"] = 1e5
-                stabi_dict["gamma-Geom"] = 1e-5
-
-                if order == 3:
-                    stabi_dict["gamma-CIP"] = 1*10**(-2) # 1e-3 
-                    stabi_dict["gamma-GLS"] = 1*10**(-5)
-                elif order == 2:
-                    stabi_dict["gamma-CIP"] = 1*10**(-5) 
-                    stabi_dict["gamma-GLS"] = 1*10**(-5)
-                else:
-                    stabi_dict["gamma-CIP"] = 1*10**(-6)
-                    stabi_dict["gamma-GLS"] = 1*10**(-6)
+                stabi_dict["gamma-Geom"] = 1e-2
+            elif order == 2:
+                stabi_dict["gamma-CIP"] = 1e-3
+                stabi_dict["gamma-GLS"] = 1e-3
+                stabi_dict["alpha-stab"] = 1e-3
+                stabi_dict["gamma-IF"] = 1e-4
+                #stabi_dict["gamma-IF-H"] = 1e-2
+                stabi_dict["gamma-data"] = 1e5
+                stabi_dict["gamma-Geom"] = 1e-2
+            else:
+                stabi_dict["gamma-CIP"] = 1e-3
+                stabi_dict["gamma-GLS"] = 1e-3
+                stabi_dict["alpha-stab"] = 1e-3
+                stabi_dict["gamma-IF"] = 1e-4
+                stabi_dict["gamma-data"] = 1e5
+                stabi_dict["gamma-Geom"] = 1e-2
 
 
         n_refs = n_ref_max-order
@@ -85,8 +94,10 @@ def EqualOrderExp(problem,solver="sparsecholesky",show_plots=False):
         for n_ref in all_refs:
             
             vtk_output = False
-            if domain_type == "squares":
-                if order == 3 and n_ref == all_refs[-1]:
+            if domain_type == "squares-easy":
+                #if order == 3 and n_ref == all_refs[-1]:
+                #if n_ref == all_refs[-1]:
+                if n_ref == 3 and order == 2:
                     vtk_output = True
             #if domain_type == "convex":
             #    if order == 3 and order_geom in [1,3] and n_ref == all_refs[-1]:
@@ -100,7 +111,7 @@ def EqualOrderExp(problem,solver="sparsecholesky",show_plots=False):
         l2_errors_order.append(l2_errors)
         grad_errors_order.append(grad_errors)
         ndofs_order.append(ndofs)
-
+    
     header_str = "ndof h rel-L2-err-B rel-H1sem-err-B"
     for idx,order in zip([0,1,2],orders):
         mesh_width = np.array(ndofs_order[idx])**(-1/2)
@@ -110,6 +121,7 @@ def EqualOrderExp(problem,solver="sparsecholesky",show_plots=False):
                            X = np.transpose(results),
                            header = header_str,
                            comments = '') 
+    
     if show_plots: 
         for idx,order,marker in zip( [0,1,2],orders,["o","s","+"] ): 
             plt.loglog(ndofs_order[idx], l2_errors_order[idx],label="p={0}".format(order),marker="o")

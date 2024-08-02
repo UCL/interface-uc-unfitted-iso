@@ -15,6 +15,30 @@ def get_geometry(case_str="nonconvex",maxh=None):
 
         only_B = B_dom - omega_dom
         only_B.Mat("only_B")
+        rest = full_dom - B_dom
+
+        # add top level objects to geometry
+        geo.Add(omega_dom)
+        geo.Add(only_B)
+        geo.Add(rest)
+
+        # generate mesh
+        m = geo.GenerateMesh(maxh=0.25)
+        return m
+
+    if case_str == "squares-easy":
+        geo = CSG2d()
+        #omega_dom = Rectangle( pmin=(-0.5,-0.5), pmax=(0.5,0.5), mat="omega", bc="bc_omega")
+        omega_dom = Rectangle( pmin=(-0.8,-0.8), pmax=(0.8,0.8), mat="omega", bc="bc_omega")
+        #B_dom = Rectangle( pmin=(-1.25,-1.25), pmax=(1.25,1.25), mat="B", bc="bc_B")
+        #B_dom = Rectangle( pmin=(-1.15,-1.15), pmax=(1.15,1.15), mat="B", bc="bc_B")
+        B_dom = Rectangle( pmin=(-1.1,-1.0), pmax=(1.1,1.0))
+        
+        full_dom = Rectangle( pmin=(-1.5,-1.5), pmax=(1.5,1.5), mat="full", bc="bc_Omega")
+        #full_dom = Rectangle( pmin=(-2.0,-2.0), pmax=(2.0,2.0), mat="full", bc="bc_Omega")
+
+        only_B = B_dom - omega_dom
+        only_B.Mat("only_B")
         rest = full_dom - B_dom 
 
         # add top level objects to geometry

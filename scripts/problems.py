@@ -36,6 +36,7 @@ class interface_problem():
     def SetDomainType(self,domain_type,ref_lvl=6):
         self.domain_type = domain_type 
         type_to_name = {"squares": "ball-4-norm-squares", 
+                        "squares-easy": "ball-4-norm-squares", 
                         "convex":"ball-4-norm-convex", 
                         "convex-3D":"ball-4-norm-convex-3D", 
                         "data-all-around":"ball-4-norm-data-all-around", 
@@ -139,7 +140,6 @@ helmholtz_4ball = interface_problem(lset=levelset,
                                     mu = mu, 
                                     k = k)
 
-# Helmholtz problem 
 rho = x**2 + y**2 + z**2
 
 def refsol_Helmholtz_2ball(mu,k):
