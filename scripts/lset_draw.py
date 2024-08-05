@@ -105,6 +105,11 @@ def draw_mesh_tikz(fes,mesh,name,case_str):
                     file.write("\\draw[line width=0.01mm,draw =black, fill={0},fill opacity=0.8] {1} -- {2} -- {3} -- cycle; \n".format("yellow",coords[0],coords[1],coords[2] ))
                 else:
                     file.write("\\draw[line width=0.01mm,draw =black, fill={0},fill opacity=0.8] {1} -- {2} -- {3} -- cycle; \n".format("white",coords[0],coords[1],coords[2] ))
+            if case_str == "squares-easy-omega" or "squares-easy-omega-B":
+                if  np.all( x_coords >= -0.8) and np.all( x_coords <= 0.8) and  np.all( y_coords >= -0.8) and np.all( y_coords <= 0.8):  
+                    file.write("\\draw[line width=0.01mm,draw =black, fill={0},fill opacity=0.8] {1} -- {2} -- {3} -- cycle; \n".format("yellow",coords[0],coords[1],coords[2] ))
+                else:
+                    file.write("\\draw[line width=0.01mm,draw =black, fill={0},fill opacity=0.8] {1} -- {2} -- {3} -- cycle; \n".format("white",coords[0],coords[1],coords[2] ))
             if case_str == "squares-B":
                 if  np.all( x_coords >= -1.25) and np.all( x_coords <= 1.25) and  np.all( y_coords >= -1.25) and np.all( y_coords <= 1.25):  
                     file.write("\\draw[line width=0.01mm,draw =black, fill={0},fill opacity=0.8] {1} -- {2} -- {3} -- cycle; \n".format("brightblue",coords[0],coords[1],coords[2] ))
@@ -159,8 +164,12 @@ def draw_mesh_tikz(fes,mesh,name,case_str):
         file.write("\\draw[white ] ({0},{1})  node[fill=white,above]{{  \\resizebox{{ .25\\linewidth}}{{!}}{{ \\textcolor{{magenta}}{{$B$}} }} }};   \n".format( 0.0*ddx ,1.1*ddx  ))
         file.write("\\draw[white ] ({0},{1})  node[fill=white,above]{{  \\resizebox{{ .25\\linewidth}}{{!}}{{ \\textcolor{{yellow}}{{$\omega$}} }} }};   \n".format( 0.0*ddx ,0.0*ddx  ))
 
+    if case_str == "squares-easy-omega-B":
+        file.write("\\draw[pattern={{Dots[ distance={{30pt}},radius={{4pt}}]  }}, pattern color = magenta ] ({0},{1}) rectangle ({2},{3}); \n".format(-1.1*ddx,-1.0*ddx,1.1*ddx,1.0*ddx)) 
+        file.write("\\draw[white ] ({0},{1})  node[fill=white,above]{{  \\resizebox{{ .25\\linewidth}}{{!}}{{ \\textcolor{{magenta}}{{$B$}} }} }};   \n".format( -0.9*ddx ,0.0*ddx  ))
+        file.write("\\draw[white ] ({0},{1})  node[fill=white,above]{{  \\resizebox{{ .25\\linewidth}}{{!}}{{ \\textcolor{{yellow}}{{$\omega$}} }} }};   \n".format( 0.0*ddx ,0.0*ddx  ))
 
-    if case_str == "convex-omega-B" or "squares-omega-B":
+    if case_str == "convex-omega-B" or "squares-omega-B" or "squares-easy-omega-B":
         file.write("\\draw[ ] ({0},{1})  node[fill=white,above]{{  \\resizebox{{ .25\\linewidth}}{{!}}{{ \\textcolor{{green!90!black}}{{$\Gamma$}} }} }};   \n".format( 0.0*ddx ,-0.95*ddx  ))
         file.write("\\begin{{axis}}[view={{0}}{{90}},  anchor=origin,  disabledatascaling, at={{(0pt,0pt)}}, x={0}cm,y={0}cm,z={0}cm, hide axis ] \n".format(ddx))
         file.write("\\addplot3 [line width=10pt, \n") 
@@ -195,6 +204,7 @@ def draw_based_on_geom(case_str="convex"):
 
 draw_based_on_geom(case_str="convex")
 draw_based_on_geom(case_str="squares")
+draw_based_on_geom(case_str="squares-easy")
 
 
 levelset = sqrt(r22) - 1.0
@@ -730,4 +740,4 @@ def draw_Stab(name="Stab-sketch.tex",levelset=levelset,dt=NEG):
     file.write("\\end{document} \n")           
     file.close()
 
-draw_Stab(name="Stab-sketch",levelset=levelset,dt=NEG)
+#draw_Stab(name="Stab-sketch",levelset=levelset,dt=NEG)

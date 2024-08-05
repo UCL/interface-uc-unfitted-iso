@@ -1,0 +1,154 @@
+\documentclass{standalone} 
+\usepackage{tikz} 
+\usepackage{pgfplots} 
+\usetikzlibrary{spy,shapes,shadows,calc,pgfplots.groupplots}
+%\usepackage{xcolor} 
+%\usetikzlibrary{shapes,arrows,shadows,snakes,calendar,matrix,spy,backgrounds,folding,calc,positioning,patterns,hobby} 
+%\usetikzlibrary{patterns,hobby} 
+%\usepackage{tkz-euclide}
+
+% All UCL colors are defined in terms of cmyk
+\selectcolormodel{cmyk}
+
+% Define UCL colours (in addition to black and white)
+%% dark colours: use white text
+\definecolor{darkpurple}{cmyk}{0.32,0.42,0,0.55}
+\definecolor{darkred}{cmyk}{0,1,0.30,0.61}
+\definecolor{darkblue}{cmyk}{1,0.24,0,0.64}
+\definecolor{darkgreen}{cmyk}{0,0,0.91,0.79}
+\definecolor{darkbrown}{cmyk}{0.57,0.80,1,0.45}
+\definecolor{richred}{cmyk}{0,1,0.62,0}
+\definecolor{midred}{cmyk}{0,0.79,1,0}
+\definecolor{navyblue}{cmyk}{1,0.57,0,0.40}
+\definecolor{midgreen}{cmyk}{0.25,0,0.80,0.30}
+\definecolor{darkgrey}{cmyk}{0,0.09,0.16,0.43}
+\definecolor{pink}{cmyk}{0,1,0.35,0.27} % no banner image
+\definecolor{orange}{cmyk}{0,0.45,0.91,0} 
+\definecolor{brightblue}{cmyk}{0.92,0,0.15,0.05}
+\definecolor{brightgreen}{cmyk}{0.12,0,0.79,0.06}
+\definecolor{lightgrey}{cmyk}{0,0.04,0.09,0.24}
+%% light colours: use black text
+\definecolor{lightpurple}{cmyk}{0.17,0.25,0.15,0}
+\definecolor{yellow}{cmyk}{0,0.25,0.95,0}
+\definecolor{lightblue}{cmyk}{0.27,0.03,0,0.13}
+\definecolor{lightgreen}{cmyk}{0.14,0,0.36,0.10}
+\definecolor{stone}{cmyk}{0,0.02,0.06,0.07}
+
+\begin{document} 
+
+\begin{tikzpicture}[
+  declare function={
+   func(\x)=( (\x) <= 1 )*( (1/sqrt(2)) * (1.0 + pi * 1.0) - cos( deg( 0.25*pi*(\x)^4) ) ) + ( (\x) >1) * ((1.0*pi/sqrt(2))*(\x)); 
+   funca(\x)=( (\x) <= 1 )*( (1/sqrt(2)) * (1.0 + pi * 10.0) - cos( deg( 0.25*pi*(\x)^4) ) ) + ( (\x) >1) * ((10.0*pi/sqrt(2))*(\x)); 
+   funcb(\x)=( (\x) <= 1 )*( (1/sqrt(2)) * (1.0 + pi * 0.1) - cos( deg( 0.25*pi*(\x)^4) ) ) + ( (\x) >1) * ((0.1*pi/sqrt(2))*(\x)); 
+  }
+  ]
+%\begin{axis}[ domain=-1.25:1.25,samples =5000]
+
+\begin{groupplot}[
+    group style={
+        group name=diff,
+        group size=1 by 3,
+        %xticklabels at=edge bottom,
+        horizontal sep=25pt,
+        vertical sep=1pt,
+   },
+   %name = dtnplot,
+   height = 2.85cm,
+   width = 6.0cm,
+   every axis plot/.append style={thick},
+   axis y line*=left,
+   legend pos = south east,
+   %label style={at={(axis description cs:0.5,-0.08)},anchor=north},
+   %every x tick scale label/.style={at={(xticklabel cs:0.925)},anchor=south west},
+   x label style={at={(axis description cs:1.2,0.2)},anchor=east},
+	every axis title/.style={below right,at={(0.1,0.9)}},
+   %xlabel= { $\lambda$},
+   ]
+
+\nextgroupplot[
+    %xmin=0,xmax=1.6e4,
+    %xtick={25, 125, 250, 500, 800, 1000},
+    %axis x line*=middle,
+    %axis y line=middle, 
+    %width=9cm,
+    %restrict y to domain=-4e2:4e2,
+    %xtick={0,2e3,4e3,6e3,8e3,10e3,12e3,14e3},
+    xlabel= { $ \Vert x \Vert_4$ },
+    %legend pos = south west,
+    legend pos = north east,
+    x label style={at={(axis description cs:0.6,0.2)},anchor=east},
+    title = { $ (\mu_1,\mu_2) = (20,2) $ },
+    domain=0:1.25,
+    samples =5000, 
+    xlabel={ },
+    xticklabels={,,},
+    ymin = 21,
+    ymax = 28
+    ]
+    \addplot[red,very thick ]  { funca(x) };
+    \addplot +[mark=none, gray, thin, densely dotted] coordinates {(1, 20) (1, 30)};
+
+\nextgroupplot[
+    %xmin=0,xmax=1.6e4,
+    %xtick={25, 125, 250, 500, 800, 1000},
+    %axis x line*=middle,
+    %axis y line=middle, 
+    ymin = 1e-2,
+    ymax = 3e0,
+    %width=9cm,
+    %restrict y to domain=-4e2:4e2,
+    %xtick={0,2e3,4e3,6e3,8e3,10e3,12e3,14e3},
+    %xlabel= { $ \Vert x \Vert_4$ },
+    %legend pos = south west,
+    legend pos = north east,
+    x label style={at={(axis description cs:0.6,0.2)},anchor=east},
+    title = { $ (\mu_1,\mu_2) = (2,2) $ },
+    domain=0:1.25,
+    samples =5000,
+    ymin = 1.75,
+    ymax = 2.85,
+    xlabel={ },
+    xticklabels={,,},
+    ]
+    \addplot[green, very thick ]  { func(x) };
+    \addplot +[mark=none, gray, thin, densely dotted] coordinates {(1, 0) (1, 3)};
+
+\nextgroupplot[
+    %xmin=0,xmax=1.6e4,
+    %xtick={25, 125, 250, 500, 800, 1000},
+    %axis x line*=middle,
+    %axis y line=middle, 
+    %width=9cm,
+    %restrict y to domain=-4e2:4e2,
+    %xtick={0,2e3,4e3,6e3,8e3,10e3,12e3,14e3},
+    xlabel= { $ \Vert x \Vert_4$ },
+    %legend pos = south west,
+    legend pos = north east,
+    x label style={at={(axis description cs:0.95,0.6)},anchor=east},
+    title = { $ (\mu_1,\mu_2) = (2,20) $ },
+    domain=0:1.25,
+    samples =5000,
+    ymin = -0.15,
+    ymax = 0.35
+    ]
+    \addplot[blue, very thick ]  { funcb(x) };
+     \addplot +[mark=none, gray, thin, densely dotted] coordinates {(1, -1) (1, 3)};
+
+\end{groupplot}
+
+
+\end{tikzpicture}
+
+%\begin{tikzpicture}[>=latex,scale=1.0,transform shape,label distance=-5,use Hobby shortcut ]
+%\begin{tikzpicture}[scale=1.0,transform shape,use Hobby shortcut,tight background ]
+\end{document}
+
+ %\begin{axis}[ domain=0:1.25,samples =5000]
+%\addplot[green, thick ]  { func(x) };
+%\addplot[red, thick ]  { funca(x) };
+%\addplot[blue, thick ]  { funcb(x) };
+%\end{axis}
+
+	  %func(\x)=( (\x) <= 1 )*( (1/sqrt(2)) * (1.0 + pi * 1.0) - cos( deg( 0.25*pi*(\x)^4) ) ) 
+	   %        + ( (\x) >1) * ((1.0*pi/sqrt(2))*(\x)); 

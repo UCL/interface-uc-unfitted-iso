@@ -227,7 +227,7 @@ def SolveZNoCut(problem, order = 1, n_refs = 0, order_geom = 1, theta_perturb = 
             delta_p = [1,1,1]
 
         f += sum( delta_p[order-1] * h**(order-theta_perturb) * f_delta[i] * w[i] * dC[i] for i in [0, 1])
-        f += sum( delta_p[order-1] * h**(order-theta_perturb) * q_delta  * v[i] * dCut(lsetp1, dt,definedon=mesh.Materials("omega"), deformation=lsetadap.deform)
+        f += sum( delta_p[order-1] * h**(order-theta_perturb) * gamma_data * q_delta  * v[i] * dCut(lsetp1, dt,definedon=mesh.Materials("omega"), deformation=lsetadap.deform)
                 for i,dt in zip([0,1],[NEG,POS]) )
         f += sum( [  h**2 * h**(order-theta_perturb) *  f_delta[i] * calL(v)[i] * dC[i] for i in [0, 1] ] )
 

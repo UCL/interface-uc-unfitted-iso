@@ -26,8 +26,8 @@ def SolvedFittedConcentric(problem,show_plots=False,r_eval=[]):
     ndofs_order = []  
     #orders = [1,2,3]
     orders = [1]
-    n_ref_max = 5
-    #n_ref_max = 4    
+    #n_ref_max = 5
+    n_ref_max = 4    
     mat2idx  = {'rest': 1,
                 'B_outer': 1,
                 'B_inner': 0,
@@ -64,7 +64,7 @@ def SolvedFittedConcentric(problem,show_plots=False,r_eval=[]):
             l2_errors.append( l2_err)
             ndofs.append(ndof)
             h1s_errors.append(result["rel-h1sem-err"])
-            #input("")
+            input("")
             #plt.plot(r_eval, result["u-vals"], label= "u(r)")
             #plt.plot(r_eval, result["uh-vals"], label= "uh(r)")
             #plt.show() 
@@ -118,7 +118,7 @@ helmholtz_3D_ball = interface_problem(lset = levelset_2ball,
                                     dim=3
                                       )
 helmholtz_3D_ball.SetProblemType(well_posed=False)
-helmholtz_3D_ball.SetDomainType(domain_type,ref_lvl = 4)
+helmholtz_3D_ball.SetDomainType(domain_type,ref_lvl = 3)
 
 N_total = 1000
 r_eval = [i*1.5/N_total for i in range(N_total-1)]

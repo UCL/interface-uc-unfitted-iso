@@ -92,13 +92,15 @@ def EqualOrderExp(problem,solver="sparsecholesky",show_plots=False):
         n_refs = n_ref_max-order
         all_refs = range(n_refs)
         for n_ref in all_refs:
-            
+            #print("domain_type = {0}, n_ref = {1}, order = {2}".format(domain_type,n_ref,order)) 
             vtk_output = False
-            if domain_type == "squares-easy":
+            if domain_type in ["squares-easy","squares"]:
                 #if order == 3 and n_ref == all_refs[-1]:
                 #if n_ref == all_refs[-1]:
-                if n_ref == 3 and order == 2:
+                if n_ref == 4 and order == 2:
                     vtk_output = True
+                    #print("vtk_output = True")
+                    #input("")
             #if domain_type == "convex":
             #    if order == 3 and order_geom in [1,3] and n_ref == all_refs[-1]:
             #        vtk_output = True
