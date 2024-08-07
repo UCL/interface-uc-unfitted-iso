@@ -25,7 +25,7 @@ def SolvedFittedConcentric(problem,show_plots=False,r_eval=[]):
     l2_errors_order_NoIF = [] 
     ndofs_order = []  
     #orders = [1,2,3]
-    orders = [1]
+    orders = [1,2]
     #n_ref_max = 5
     n_ref_max = 4    
     mat2idx  = {'rest': 1,
@@ -64,7 +64,7 @@ def SolvedFittedConcentric(problem,show_plots=False,r_eval=[]):
             l2_errors.append( l2_err)
             ndofs.append(ndof)
             h1s_errors.append(result["rel-h1sem-err"])
-            input("")
+            #input("")
             #plt.plot(r_eval, result["u-vals"], label= "u(r)")
             #plt.plot(r_eval, result["uh-vals"], label= "uh(r)")
             #plt.show() 
@@ -108,7 +108,8 @@ def SolvedFittedConcentric(problem,show_plots=False,r_eval=[]):
 
 domain_type = "concentric-3D-fitted"
 
-mu = [3.0,30.0]
+mu = [3.0,3.0]
+#mu = [3.0,30.0]
 k = [10,30]
 
 helmholtz_3D_ball = interface_problem(lset = levelset_2ball,
