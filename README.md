@@ -88,7 +88,7 @@ The value of the diffusion parameter in subdomain Omega1 is mu1 = __a__ and in s
 * rel-L2-err-B: relative L2-error in target domain B 
 * rel-H1sem-err-B: relative H1-semi-error (only the gradient) in target domain B 
 
-The raw vtk-data for the plots of the absolute error is contained in the files `ball-4-norm-squares-ip-p2-q2-mus(__a__,__b__)-ks(16,1)-lvl4.vtu`, where 
+The raw vtk-data for the plots of the absolute error is contained in the files "ball-4-norm-squares-ip-p2-q2-mus(__a__,__b__)-ks(16,1)-lvl4.vtu", where 
 mu1 = __a__ and in subdomain Omega1 is mu2 = __b__ in subdomain Omega2 (you may copy these files to your own machine and inspect them using paraview).
 To generate Figure 4, switch to the folder `plots` and run  
 
@@ -117,16 +117,17 @@ Change to directory `scripts`. Run
 
 Data files of the form "ball-4-norm-squares-iprelL2error-pq __i__ -mus(__a__,__b__)-ks(__c__,__d__).dat". The meaning of the variables __i__,__a__ and __b__ is like 
 explained in [Figure 4](#Fig4). Further,  k1 = __c__ is the wavenumber in subdomain Omega1 and k2 = __d__ in subdomain Omega2. 
-Additionally, `vtu` files (called accordingly) containing the data for the plots in the inset of Figure 6 will be produced. To generate Figure 6, switch to the folder `plots` and run  
-    lualatex -pdf ball-4-norm-squares-Helmholtz-contrast-rev.tex
+Additionally, `vtu` files (called accordingly) containing the data for the plots in the inset of Figure 6 will be produced. To generate Figure 6, switch to the folder `plots` and run 
 
+    lualatex -pdf ball-4-norm-squares-Helmholtz-contrast-rev.tex
 
 ## <a name="Fig7"></a> Figure 7
 For reproduce the data, change to directory `scripts` and run
 
     python3 convex-exact-data.py
 
-Afterwards, new data files of the form "ball-4-norm-convex-ip-p __i__ -q __j__ -mus(1,2)-ks(16,2).dat" will be available in the folder `data`. Here, __i__ in [1,2,3] describes the finite element order p and __j__ the order of the geometry approximation q in [1,2,3] using the same notation as in the paper. 
+Afterwards, new data files of the form "ball-4-norm-convex-ip-p __i__ -q __j__ -mus(__a__,__b__)-ks(__c__,__d__).dat" will be available in the folder `data`. Here, __i__ in [1,2,3] describes the finite element order p and __j__ the order of the geometry approximation q in [1,2,3] using the same notation as in the paper. 
+As above, __a__ is mu1, __b__ is mu2, __c__ is k1 and __d__ is k2.
 The data in these files is ordered in the same way as described in [Figure 4](#Fig4). 
 
 There are also `vtu` files produced (named similarly as above) which contain the raw data for the plots of the absolute error show in the insets of 
@@ -142,7 +143,7 @@ Change to directory `scripts`. Run
 
     python3 convex-noise.py   
 
-Data files of the form "ball-4-norm-convex-ip-p __i__ -q __i__ -theta __j__-deltap0__X__.dat". Here:
+Data files of the form "ball-4-norm-convex-ip-p __i__ -q __i__ -theta __j__-deltap0__X__.dat" will be created. Here:
 
 *  __i__ in [1,2,3] describes the finite element order p, which is chosen equal to the order of the geometry approximation q for this problem,
 * __j__ in [0,1,2] gives the value of theta (as defined in Secion 5.2.2 of the paper),
@@ -164,8 +165,8 @@ Change to directory `scripts`. Run
 
 The data files for the unfitted case containing the relative L2-errors in the targe domain are called "3D-comp-unfitted-stab--p__j__-q__j__-mus(3,__a__)-ks(10,30).dat" where where __j__ in [1,2,3] represents the finite element order and __a__ in [3,30] the value of mu2 in subdomain Omega2. 
 The data files for the fitted case containing the errors are "3D-comp-fitted-stab-ip-p__j__-q__j__-mus(3,__a__)-ks(10,30).dat". 
-These are the data files for the bottom panel of the plot. The files for the bottom panel are also available. 
-These are called "3D-comp-unfitted-stab-u-eval-reflvl2-p__j__-mus(3,__a__)-ks(10,30).dat" for the unfitted case and "3D-comp-fitted-stab-u-eval-reflvl2-p__j__-mus(3,__a__)-ks(10,30).dat" for the fitted case. The daata files contain the following three columns: 
+These are the data files for the top panel of the plot. The files for the bottom panel are also available. 
+These are called "3D-comp-unfitted-stab-u-eval-reflvl2-p__j__-mus(3,__a__)-ks(10,30).dat" for the unfitted case and "3D-comp-fitted-stab-u-eval-reflvl2-p__j__-mus(3,__a__)-ks(10,30).dat" for the fitted case. The data files contain the following three columns: 
 
 * linecord: This is the x1 coordinate which is given on the horozontal axis of the plots.
 * uval: The values of the reference solution (grey in the plot).
