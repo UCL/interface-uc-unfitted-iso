@@ -22,8 +22,8 @@ run these commands.
 * Please install the `docker` platform for your distribution as described [here](https://docs.docker.com/get-docker/).
 * After installation the `Docker daemon` has to be started. This can either be done on boot or manually. In most Linux 
 distributions the command for the latter is either `sudo systemctl start docker` or `sudo service docker start`.
-* Pull the docker image using the command `docker pull janosch2888/interface-uc:v1`. 
-* Run the image with `sudo docker run -it janosch2888/interface-uc:v1 bash`.
+* Pull the docker image using the command `docker pull janosch2888/interface-uc:v2`. 
+* Run the image with `sudo docker run -it janosch2888/interface-uc:v2 bash`.
 * Proceed further as described in [How to reproduce](#repro).
 
 ## Downloading the docker image from Zenodo
@@ -35,11 +35,15 @@ distributions the command for the latter is either `sudo systemctl start docker`
 
 ## Manual installation
 We first have to install the library `ngsxfem` as described in detail [here](https://github.com/ngsxfem/ngsxfem/blob/release/INSTALLATION.md).
+The results in this article have been obtained using the software at commit eb62b3474d6b4ec6bd4bc1e269d157e94243d8a8. This specific commit 
+should be checked out when compiling from source. Alternatively, it is possible to install the software via pip at a version that is cl
+
 The easiest option is probably installation via `pip`. Please make sure to specify the following version 
 
-    pip install xfem==2.1.2301
+    pip install xfem==2.1.2403
  
-In case you would like to compile from source, please checkout the tag `v2.1.2301`.
+
+In case you would like to compile from source, please checkout the commit ` `.
 For compiling the figures you will also need a recent `latex` distribution installed on your machine.
 Now we are ready to clone the repository using 
 
@@ -70,55 +74,27 @@ The file `figure.pdf` can then be found at the designated path on the host machi
 Alternatively, if a recent latex distribution is available on the host machine it is also possible to copy data and tex files to the latter and
 compile the figures there.
 
-## <a name="Fig3"></a> Fig. 3
-Change to directory `scripts`. Run
 
-    python3 convex-exact-data.py
+## <a name="Fig4"></a> Figure 4
+Change to directory `scripts`. Run 
 
-Afterwards, new data files of the form "ball-4-norm-convex-ip-p __i__ -q __j__ -mus(1,2)-ks(16,2).dat" will be available in the folder `data`. Here, __i__ in [1,2,3] describes the finite element order p and __j__ the order of the geometry approximation q in [1,2,3] using the same notation as in the paper. 
-The data in the files is structured in the following columns:
+    python3 squares-diffusion-contrast.py
+
+Data files of the form "ball-4-norm-squares-iprelL2error-pq __i__ -mus(__a__,__b__)-ks(0,0).dat" will be created. Here, __i__ describes the finite element order.
+The value of the diffusion parameter in subdomain Omega1 is mu1 = __a__ and in subdomain Omega2 is mu2 = __b__. The data in the files is structured in the following columns:
 
 * ndof: Degrees of freedom in the finite element space (= CutFEM space + space for dual variable)
 * h: Proportional to the width of the mesh
 * rel-L2-err-B: relative L2-error in target domain B 
 * rel-H1sem-err-B: relative H1-semi-error (only the gradient) in target domain B 
 
-There are also two `vtu` files produced (named similarly as above) which contain the raw data for the plots of the absolute error show in the insets of 
-Fig 3 (you may copy these files to your local machine and inspect using paraview).
-To generate Fig 3, switch to the folder `plots` and run 
-
-    lualatex -pdf ball-4-norm-convex-ip-qs-pres.tex
-
-
-## Fig. 4
-Change to directory `scripts`. Run
-
-    python3 convex-noise.py   
-
-Data files of the form "ball-4-norm-convex-ip-p __i__ -q __i__ -theta __j__-deltap0__X__.dat". Here:
-
-*  __i__ in [1,2,3] describes the finite element order p, which is chosen equal to the order of the geometry approximation q for this problem,
-* __j__ in [0,1,2] gives the value of theta (as defined in Secion 5.1.2 of the paper),
-* __X__ in [1,5] gives the first entry of the the variable delta_p (also defined in Section 5.1.2). So, __X__ = 1 corresponds to the solid lines 
-in the plot while __X__ = 5 corresponds to the dashed lines. 
-
-To generate Fig 4, switch to the folder `plots` and run  
-    
-    lualatex -pdf  ball-4-norm-convex-Helmholtz-noise.tex
-
-## <a name="Fig6"></a> Fig. 6
-Change to directory `scripts`. Run 
-
-    python3 squares-diffusion-contrast.py
-
-Data files of the form "ball-4-norm-squares-iprelL2error-pq __i__ -mus(__a__,__b__)-ks(0,0).dat" will be created. Here, __i__ describes the finite element order.
-The value of the diffusion parameter in subdomain Omega1 is mu1 = __a__ and in subdomain Omega2 is mu2 = __b__. The data in these files is ordered in the 
-same way as described in [Fig.3](#Fig3)
-To generate Fig 6, switch to the folder `plots` and run  
+The raw vtk-data for the plots of the absolute error is contained in the files `ball-4-norm-squares-ip-p2-q2-mus(__a__,__b__)-ks(16,1)-lvl4.vtu`, where 
+mu1 = __a__ and in subdomain Omega1 is mu2 = __b__ in subdomain Omega2 (you may copy these files to your own machine and inspect them using paraview).
+To generate Figure 4, switch to the folder `plots` and run  
 
     lualatex -pdf ball-4-norm-squares-diffusion-contrast.tex
 
-## Fig. 7
+## Figure 5
 Change to directory `scripts`. Run 
 
     python3 squares-diffusion-parameter-study.py
@@ -127,38 +103,77 @@ This may take a while (~ 1hour). The following files will be produced:
 
 * The file "ball-4-norm-squares-param-tuning-ip-gamma-IF-EqualOrder.dat" contains the data for the adjoint consistent method (solid line) in the left plot. 
 The data for the method which is not adjoint consistent is available in "ball-4-norm-squares-param-tuning-ip-gamma-IF-EqualOrder-NoAdjCons.dat". The first column in the file is the value of the stabilization parameter, the other columns contain the relative L2-errors for the respective orders p.
-* "ball-4-norm-squares-param-tuning-ip-gamma-Geom-q1.dat" contains the data for the middle plot of Fig. 7, so q=1.
-* "ball-4-norm-squares-param-tuning-ip-gamma-Geom-pq-equal.dat" contains the data for the rightmost plot of Fig. 7
+* "ball-4-norm-squares-param-tuning-ip-gamma-Geom-q1.dat" contains the data for the middle plot of Figure 5, so q=1.
+* "ball-4-norm-squares-param-tuning-ip-gamma-Geom-pq-equal.dat" contains the data for the rightmost plot of Figure 5
 
-To generate Fig 7, switch to the folder `plots` and run  
+To generate Figure 5, switch to the folder `plots` and run  
 
     lualatex -pdf ball-4-norm-squares-diffusion-Stab.tex
 
-
-## Fig. 8
+## Figure 6
 Change to directory `scripts`. Run 
 
     python3 squares-exact-data-Helmholtz.py
 
-Data files of the form "ball-4-norm-squares-iprelL2error-pq __i__ -mus(__a__,__b__)-ks(16,2).dat". The meaning of the variables __i__,__a__ and __b__ is like 
-explained in [Fig.6](#Fig6). Additionally, `vtu` files for containing the data for the plots in the inset of Fig 8 will be produced. To generate Fig 8, switch to the folder `plots` and run  
+Data files of the form "ball-4-norm-squares-iprelL2error-pq __i__ -mus(__a__,__b__)-ks(__c__,__d__).dat". The meaning of the variables __i__,__a__ and __b__ is like 
+explained in [Figure 4](#Fig4). Further,  k1 = __c__ is the wavenumber in subdomain Omega1 and k2 = __d__ in subdomain Omega2. 
+Additionally, `vtu` files (called accordingly) containing the data for the plots in the inset of Figure 6 will be produced. To generate Figure 6, switch to the folder `plots` and run  
+    lualatex -pdf ball-4-norm-squares-Helmholtz-contrast-rev.tex
 
-    lualatex -pdf ball-4-norm-squares-Helmholtz-contrast.tex
 
-## Fig. 9
+## <a name="Fig7"></a> Figure 7
+For reproduce the data, change to directory `scripts` and run
+
+    python3 convex-exact-data.py
+
+Afterwards, new data files of the form "ball-4-norm-convex-ip-p __i__ -q __j__ -mus(1,2)-ks(16,2).dat" will be available in the folder `data`. Here, __i__ in [1,2,3] describes the finite element order p and __j__ the order of the geometry approximation q in [1,2,3] using the same notation as in the paper. 
+The data in these files is ordered in the same way as described in [Figure 4](#Fig4). 
+
+There are also `vtu` files produced (named similarly as above) which contain the raw data for the plots of the absolute error show in the insets of 
+Figure 7. To generate Figure 7, switch to the folder `plots` and run 
+
+    lualatex -pdf ball-4-norm-convex-ip-qs-pres.tex
+    lualatex -pdf ball-4-norm-convex-Helmholtz-wavenumber.tex
+
+The furst command will compile figure (A) and the second figure (C).
+
+## Figure 8
+Change to directory `scripts`. Run
+
+    python3 convex-noise.py   
+
+Data files of the form "ball-4-norm-convex-ip-p __i__ -q __i__ -theta __j__-deltap0__X__.dat". Here:
+
+*  __i__ in [1,2,3] describes the finite element order p, which is chosen equal to the order of the geometry approximation q for this problem,
+* __j__ in [0,1,2] gives the value of theta (as defined in Secion 5.2.2 of the paper),
+* __X__ in [1,5] gives the first entry of the the variable delta_p (also defined in Section 5.2.2). So, __X__ = 1 corresponds to the solid lines 
+in the plot while __X__ = 5 corresponds to the dashed lines. 
+
+To generate Figure 8, switch to the folder `plots` and run  
+    
+    lualatex -pdf  ball-4-norm-convex-Helmholtz-noise.tex
+
+## Figure 9
 
 #### Disclaimer: 
-This is a 3D experiment which is computationally intensive. Please do not attempt to run this experiment 
-on machines that have less than 64GB of RAM.
-
+This is a 3D experiment which is computationally intensive. The final refinement level requires the machine to have about 400Gb of RAM.
 Change to directory `scripts`. Run 
 
-    python3 3DStudy.py
+    python3 3D-comp-unfitted-stab.py
+    python3 3D-comp-fitted-stab.py
 
-Data files of the form "ball-4-norm-convex-3D-ip-p __j__ -q __j__ -mus(1,2)-ks(0,0).dat" will be produced where __j__ in [1,2,3] represents the finite
-element order. Additionally, a `vtu` file containing the data for the plot of the absolute error shown in the center of Fig 9 will be created. To generate Fig. 9, switch to the folder `plots` and run 
+The data files for the unfitted case containing the relative L2-errors in the targe domain are called "3D-comp-unfitted-stab--p__j__-q__j__-mus(3,__a__)-ks(10,30).dat" where where __j__ in [1,2,3] represents the finite element order and __a__ in [3,30] the value of mu2 in subdomain Omega2. 
+The data files for the fitted case containing the errors are "3D-comp-fitted-stab-ip-p__j__-q__j__-mus(3,__a__)-ks(10,30).dat". 
+These are the data files for the bottom panel of the plot. The files for the bottom panel are also available. 
+These are called "3D-comp-unfitted-stab-u-eval-reflvl2-p__j__-mus(3,__a__)-ks(10,30).dat" for the unfitted case and "3D-comp-fitted-stab-u-eval-reflvl2-p__j__-mus(3,__a__)-ks(10,30).dat" for the fitted case. The daata files contain the following three columns: 
 
-    lualatex -pdf ball-4-norm-convex-3D-diffusion.tex 
+* linecord: This is the x1 coordinate which is given on the horozontal axis of the plots.
+* uval: The values of the reference solution (grey in the plot).
+* uhval: The values of the numerical solution.
+
+To generate Figure 9, switch to the folder `plots` and run 
+
+    lualatex -pdf ball-3d-fitted-unfitted-contrast.tex
 
 
 
