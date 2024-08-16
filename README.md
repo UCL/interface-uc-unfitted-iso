@@ -30,20 +30,18 @@ distributions the command for the latter is either `sudo systemctl start docker`
 * For this option the first two steps are the same as above.
 * The image can be downloaded [here](https://doi.org/10.5281/zenodo.8134572). 
 * Assuming that `interface-uc-repro.tar` is the filename of the downloaded image, please load the image with `sudo docker load < interface-uc-repro.tar`.
-* Run the image with `sudo docker run -it janosch2888/interface-uc:v1 bash`.
+* Run the image with `sudo docker run -it janosch2888/interface-uc:v2 bash`.
 * Proceed further as described in [How to reproduce](#repro).
 
 ## Manual installation
 We first have to install the library `ngsxfem` as described in detail [here](https://github.com/ngsxfem/ngsxfem/blob/release/INSTALLATION.md).
-The results in this article have been obtained using the software at commit eb62b3474d6b4ec6bd4bc1e269d157e94243d8a8. This specific commit 
+The results in this article have been obtained using the software at commit 210de1e407ceb074027c9b9d93c94ccb5f3526f9 (tag: v2.1.2302). This specific commit 
 should be checked out when compiling from source. Alternatively, it is possible to install the software via pip at a version that is cl
 
 The easiest option is probably installation via `pip`. Please make sure to specify the following version 
 
-    pip install xfem==2.1.2403
+    pip install xfem==2.1.2302
  
-
-In case you would like to compile from source, please checkout the commit ` `.
 For compiling the figures you will also need a recent `latex` distribution installed on your machine.
 Now we are ready to clone the repository using 
 

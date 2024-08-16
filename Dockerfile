@@ -1,11 +1,15 @@
-FROM ngsxfem/ngsxfem:latest
+FROM ngsxfem/ngsxfem:v2.1.2302
+
+WORKDIR /home/app
 
 USER root
-RUN sed -i -re 's/([a-z]{2}\.)?archive.ubuntu.com|security.ubuntu.com/old-releases.ubuntu.com/g' /etc/apt/sources.list
-RUN apt-get update && apt-get dist-upgrade -y
-RUN apt-get install -y  \
-  texlive-full \
-  wget
+RUN chown -R ${NB_UID} ${HOME}
+USER ${NB_USER}
+
+RUN apt-get update
+RUN apt-get install -y software-properties-common
+RUN add-apt-repository universe
+RUN apt-get install -y psmisc texlive-full
 
 WORKDIR /home/app        
 RUN git clone https://github.com/UCL/interface-uc-unfitted-iso.git

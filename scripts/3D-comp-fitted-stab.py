@@ -26,8 +26,8 @@ def SolvedFittedConcentric(problem,show_plots=False,r_eval=[]):
     ndofs_order = []  
     #orders = [1,2,3]
     orders = [1,2]
-    #n_ref_max = 5
-    n_ref_max = 4    
+    n_ref_max = 5
+    #n_ref_max = 4    
     mat2idx  = {'rest': 1,
                 'B_outer': 1,
                 'B_inner': 0,
@@ -125,7 +125,26 @@ N_total = 1000
 r_eval = [i*1.5/N_total for i in range(N_total-1)]
 helmholtz_3D_ball.eval_pts= [ (rr, 0.0, 0.0 ) for rr in r_eval ]
 
-#mu = [1.0,10.0]
-#k = [1.0,1.0]
+helmholtz_3D_ball.Update(mu=mu,k=k,solution= refsol_Helmholtz_2ball(mu=mu,k=k))
+SolvedFittedConcentric(problem=helmholtz_3D_ball ,show_plots=True, r_eval=r_eval)
+
+#################################################################################
+
+mu = [3.0,30.0]
+k = [10,30]
+
+helmholtz_3D_ball = interface_problem(lset = levelset_2ball,
+                                    solution = refsol_Helmholtz_2ball(mu,k),
+                                    mu = mu,
+                                    k = k,
+                                    dim=3
+                                      )
+helmholtz_3D_ball.SetProblemType(well_posed=False)
+helmholtz_3D_ball.SetDomainType(domain_type,ref_lvl = 3)
+
+N_total = 1000
+r_eval = [i*1.5/N_total for i in range(N_total-1)]
+helmholtz_3D_ball.eval_pts= [ (rr, 0.0, 0.0 ) for rr in r_eval ]
+
 helmholtz_3D_ball.Update(mu=mu,k=k,solution= refsol_Helmholtz_2ball(mu=mu,k=k))
 SolvedFittedConcentric(problem=helmholtz_3D_ball ,show_plots=True, r_eval=r_eval)

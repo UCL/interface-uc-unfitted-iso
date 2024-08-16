@@ -125,15 +125,34 @@ helmholtz_3D_ball = interface_problem(lset = levelset_2ball,
                                       )
 helmholtz_3D_ball.SetProblemType(well_posed=False)
 helmholtz_3D_ball.SetDomainType(domain_type,ref_lvl = 4)
-#mu = [1.0,10.0]
-#k = [1.0,1.0]
 
 N_total = 1000
 r_eval = [i*1.5/N_total for i in range(N_total-1)]
 #r_eval = [ 0.47+i*1.0/N_total for i in range(N_total)]
 helmholtz_3D_ball.eval_pts= [ (rr, 0.0, 0.0 ) for rr in r_eval ]
-#mu = [1.0,1.0]
-#k = [1.0,1.0]
+
+helmholtz_3D_ball.Update(mu=mu,k=k,solution= refsol_Helmholtz_2ball(mu=mu,k=k))
+ResolvedGeom(problem=helmholtz_3D_ball ,show_plots=True, r_eval=r_eval)
+
+#######################################################################################
+
+mu = [3.0,30.0]
+k = [10,30]
+
+helmholtz_3D_ball = interface_problem(lset = levelset_2ball,
+                                    solution = refsol_Helmholtz_2ball(mu,k),
+                                    mu = mu,
+                                    k = k,
+                                    dim=3,
+                                    pre_refine_lset = 0.2
+                                      )
+helmholtz_3D_ball.SetProblemType(well_posed=False)
+helmholtz_3D_ball.SetDomainType(domain_type,ref_lvl = 4)
+
+N_total = 1000
+r_eval = [i*1.5/N_total for i in range(N_total-1)]
+#r_eval = [ 0.47+i*1.0/N_total for i in range(N_total)]
+helmholtz_3D_ball.eval_pts= [ (rr, 0.0, 0.0 ) for rr in r_eval ]
 
 helmholtz_3D_ball.Update(mu=mu,k=k,solution= refsol_Helmholtz_2ball(mu=mu,k=k))
 ResolvedGeom(problem=helmholtz_3D_ball ,show_plots=True, r_eval=r_eval)
